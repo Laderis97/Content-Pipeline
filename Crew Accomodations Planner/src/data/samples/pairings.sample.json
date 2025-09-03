@@ -1,1 +1,18 @@
-// Pairings sample stub - to be implemented
+[
+  {
+    "id": "550e8400-e29b-41d4-a716-446655440100",
+    "airlineId": "550e8400-e29b-41d4-a716-446655440000",
+    "crewSize": 4,
+    "legs": [
+      {
+        "flightNo": "SA123",
+        "carrier": "SA",
+        "depIata": "LAX",
+        "arrIata": "JFK",
+        "depUtc": "2025-09-03T10:00:00Z",
+        "arrUtc": "2025-09-03T18:30:00Z",
+        "equipment": "B737"
+      }
+    ]
+  }
+]

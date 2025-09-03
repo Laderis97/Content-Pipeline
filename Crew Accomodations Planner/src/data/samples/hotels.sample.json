@@ -1,1 +1,4 @@
-// Hotels sample stub - to be implemented
+[
+  {"id":"11111111-1111-1111-1111-111111111111","name":"Hilton Sample SEA","brand":"Hilton","address":"SEA Ave","city":"Seattle","lat":47.45,"lon":-122.30,"rating":4.2,"reviews":120,
+   "rate":{"hotelId":"11111111-1111-1111-1111-111111111111","currency":"USD","nightly":199}}
+]

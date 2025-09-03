@@ -1,9 +1,14 @@
-name: ci-cd-stub
+name: ci-cd
+
 on:
   push:
     branches: [ main ]
+
 jobs:
-  placeholder:
+  build-test:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "CI/CD workflow stub - to be implemented"
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - run: pnpm i
+      - run: pnpm build

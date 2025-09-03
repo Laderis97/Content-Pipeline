@@ -1,1 +1,3 @@
-// Airports sample stub - to be implemented
+[
+  {"iata":"SEA","name":"Seattle-Tacoma Intl","city":"Seattle","lat":47.4489,"lon":-122.3094,"tz":"America/Los_Angeles"}
+]

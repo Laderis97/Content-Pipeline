@@ -25,20 +25,20 @@ export interface HotelRate {
   taxesFees?: number; 
 }
 
-export interface HotelCandidate {
+export interface HotelCandidate { 
   id: UUID; 
   name: string; 
   brand?: string; 
   lat: number; 
   lon: number; 
   address?: string; 
-  city?: string;
+  city?: string; 
   rating?: number; 
   reviews?: number; 
   rate?: HotelRate; 
   distanceKm?: number; 
   etaMinutes?: number; 
-  notes?: string[];
+  notes?: string[]; 
 }
 
 export interface Constraints { 

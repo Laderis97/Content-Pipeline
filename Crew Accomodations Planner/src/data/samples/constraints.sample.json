@@ -1,1 +1,9 @@
-// Constraints sample stub - to be implemented
+{
+  "maxCommuteMinutes": 30,
+  "minHotelRating": 3.8,
+  "maxNightlyUsd": 210,
+  "preferredBrands": ["Hilton","Marriott"],
+  "minReviews": 100,
+  "minRestHours": 10,
+  "sameHotelForCrew": true
+}
