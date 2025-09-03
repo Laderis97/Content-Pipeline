@@ -1,0 +1,9 @@
+name: ci-cd-stub
+on:
+  push:
+    branches: [ main ]
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "CI/CD workflow stub - to be implemented"

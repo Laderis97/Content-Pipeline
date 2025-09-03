@@ -1,0 +1,1 @@
+-- Supabase policies stub - to be implemented
