@@ -2,7 +2,7 @@ name: Deploy Content Pipeline
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, development ]
     paths:
       - 'supabase/**'
       - 'scripts/**'
@@ -119,7 +119,7 @@ jobs:
     name: Deploy to Development
     runs-on: ubuntu-latest
     needs: validate
-    if: github.ref == 'refs/heads/develop' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'development')
+    if: github.ref == 'refs/heads/development' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'development')
     environment: development
     
     steps:
