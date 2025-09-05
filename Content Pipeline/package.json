@@ -1,0 +1,38 @@
+{
+  "name": "content-pipeline-automation",
+  "version": "1.0.0",
+  "description": "Daily content automation system using Supabase Edge Functions, OpenAI, and WordPress",
+  "main": "index.js",
+  "scripts": {
+    "dev": "supabase functions serve",
+    "deploy": "supabase functions deploy",
+    "test": "deno test --allow-net --allow-env",
+    "lint": "deno lint",
+    "format": "deno fmt",
+    "type-check": "deno check"
+  },
+  "keywords": [
+    "supabase",
+    "edge-functions",
+    "openai",
+    "wordpress",
+    "content-automation",
+    "seo"
+  ],
+  "author": "Content Pipeline Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/content-pipeline-automation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/content-pipeline-automation/issues"
+  },
+  "homepage": "https://github.com/your-org/content-pipeline-automation#readme"
+}

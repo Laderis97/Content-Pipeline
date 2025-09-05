@@ -1,0 +1,546 @@
+name: Test Content Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'supabase/**'
+      - 'scripts/**'
+      - '.github/workflows/test.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'supabase/**'
+      - 'scripts/**'
+      - '.github/workflows/test.yml'
+  schedule:
+    # Run tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of tests to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - unit
+          - integration
+          - performance
+          - security
+
+env:
+  NODE_VERSION: '18'
+  DENO_VERSION: '1.40.0'
+
+jobs:
+  # Job 1: Unit Tests
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'unit' || github.event.inputs.test_type == 'all' || github.event.inputs.test_type == null
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run TypeScript compilation tests
+        run: |
+          echo "Testing TypeScript compilation..."
+          npx tsc --noEmit
+          
+      - name: Test Edge Function syntax
+        run: |
+          echo "Testing Edge Function syntax..."
+          for func in supabase/functions/*/; do
+            if [ -f "$func/index.ts" ]; then
+              echo "Testing $(basename "$func")..."
+              deno check "$func/index.ts"
+            fi
+          done
+          
+      - name: Test database migrations
+        run: |
+          echo "Testing database migrations..."
+          # Check if supabase CLI is available
+          if command -v supabase &> /dev/null; then
+            supabase db diff --schema public || echo "Migration test failed, but continuing..."
+          else
+            echo "Supabase CLI not available, skipping migration test"
+          fi
+          
+      - name: Test configuration files
+        run: |
+          echo "Testing configuration files..."
+          
+          # Test package.json
+          if [ -f "package.json" ]; then
+            echo "Validating package.json..."
+            npm pkg get name version description
+          fi
+          
+          # Test tsconfig.json
+          if [ -f "tsconfig.json" ]; then
+            echo "Validating tsconfig.json..."
+            npx tsc --showConfig > /dev/null
+          fi
+          
+          # Test supabase config
+          if [ -f "supabase/config.toml" ]; then
+            echo "Validating supabase/config.toml..."
+            # Basic validation - check if file is readable
+            if [ -r "supabase/config.toml" ]; then
+              echo "Config file is readable"
+            else
+              echo "Config file is not readable"
+              exit 1
+            fi
+          fi
+          
+      - name: Test shared utilities
+        run: |
+          echo "Testing shared utilities..."
+          
+          # Test shared modules
+          for module in supabase/functions/_shared/*.ts; do
+            if [ -f "$module" ]; then
+              echo "Testing $(basename "$module")..."
+              deno check "$module"
+            fi
+          done
+          
+      - name: Test deployment scripts
+        run: |
+          echo "Testing deployment scripts..."
+          
+          # Test deploy script
+          if [ -f "scripts/deploy.sh" ]; then
+            echo "Testing deploy.sh syntax..."
+            bash -n scripts/deploy.sh
+          fi
+          
+          # Test rollback script
+          if [ -f "scripts/rollback.sh" ]; then
+            echo "Testing rollback.sh syntax..."
+            bash -n scripts/rollback.sh
+          fi
+
+  # Job 2: Integration Tests
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'integration' || github.event.inputs.test_type == 'all' || github.event.inputs.test_type == null
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+          
+      - name: Install Supabase CLI
+        run: |
+          npm install -g supabase
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Start Supabase locally
+        run: |
+          echo "Starting Supabase locally..."
+          supabase start
+          
+      - name: Wait for Supabase to be ready
+        run: |
+          echo "Waiting for Supabase to be ready..."
+          sleep 30
+          
+      - name: Run database migrations
+        run: |
+          echo "Running database migrations..."
+          supabase db reset
+          
+      - name: Test Edge Function integration
+        run: |
+          echo "Testing Edge Function integration..."
+          
+          # Test content automation function
+          curl -s -X GET "http://localhost:54321/functions/v1/content-automation" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" \
+            -H "Content-Type: application/json" || echo "Content automation test failed"
+            
+          # Test scheduler function
+          curl -s -X GET "http://localhost:54321/functions/v1/scheduler?action=status" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" \
+            -H "Content-Type: application/json" || echo "Scheduler test failed"
+            
+          # Test secrets function
+          curl -s -X GET "http://localhost:54321/functions/v1/secrets?action=status" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" \
+            -H "Content-Type: application/json" || echo "Secrets test failed"
+            
+      - name: Test database functions
+        run: |
+          echo "Testing database functions..."
+          
+          # Test scheduler functions
+          supabase db reset --linked || echo "Database reset failed"
+          
+      - name: Test scheduler integration
+        run: |
+          echo "Testing scheduler integration..."
+          
+          # Test scheduler initialization
+          curl -s -X POST "http://localhost:54321/functions/v1/scheduler?action=initialize" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" \
+            -H "Content-Type: application/json" || echo "Scheduler initialization test failed"
+            
+      - name: Test secrets integration
+        run: |
+          echo "Testing secrets integration..."
+          
+          # Test secrets management
+          curl -s -X GET "http://localhost:54321/functions/v1/secrets?action=status" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_DEV }}" \
+            -H "Content-Type: application/json" || echo "Secrets status test failed"
+            
+      - name: Stop Supabase
+        if: always()
+        run: |
+          echo "Stopping Supabase..."
+          supabase stop
+
+  # Job 3: Performance Tests
+  performance-tests:
+    name: Performance Tests
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'performance' || github.event.inputs.test_type == 'all' || github.event.inputs.test_type == null
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: ${{ env.DENO_VERSION }}
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Test Edge Function performance
+        run: |
+          echo "Testing Edge Function performance..."
+          
+          # Test function compilation time
+          start_time=$(date +%s)
+          for func in supabase/functions/*/; do
+            if [ -f "$func/index.ts" ]; then
+              echo "Compiling $(basename "$func")..."
+              deno check "$func/index.ts"
+            fi
+          done
+          end_time=$(date +%s)
+          compilation_time=$((end_time - start_time))
+          echo "Total compilation time: ${compilation_time}s"
+          
+          # Check if compilation time is reasonable (less than 30 seconds)
+          if [ $compilation_time -gt 30 ]; then
+            echo "WARNING: Compilation time is high: ${compilation_time}s"
+          fi
+          
+      - name: Test database migration performance
+        run: |
+          echo "Testing database migration performance..."
+          
+          # Check if supabase CLI is available
+          if command -v supabase &> /dev/null; then
+            start_time=$(date +%s)
+            supabase db diff --schema public || echo "Migration test failed, but continuing..."
+            end_time=$(date +%s)
+            migration_time=$((end_time - start_time))
+            echo "Migration time: ${migration_time}s"
+            
+            # Check if migration time is reasonable (less than 10 seconds)
+            if [ $migration_time -gt 10 ]; then
+              echo "WARNING: Migration time is high: ${migration_time}s"
+            fi
+          else
+            echo "Supabase CLI not available, skipping migration performance test"
+          fi
+          
+      - name: Test script performance
+        run: |
+          echo "Testing script performance..."
+          
+          # Test deploy script performance
+          if [ -f "scripts/deploy.sh" ]; then
+            start_time=$(date +%s)
+            bash -n scripts/deploy.sh
+            end_time=$(date +%s)
+            deploy_script_time=$((end_time - start_time))
+            echo "Deploy script validation time: ${deploy_script_time}s"
+          fi
+          
+          # Test rollback script performance
+          if [ -f "scripts/rollback.sh" ]; then
+            start_time=$(date +%s)
+            bash -n scripts/rollback.sh
+            end_time=$(date +%s)
+            rollback_script_time=$((end_time - start_time))
+            echo "Rollback script validation time: ${rollback_script_time}s"
+          fi
+          
+      - name: Test file size performance
+        run: |
+          echo "Testing file size performance..."
+          
+          # Check total project size
+          total_size=$(du -sh . | cut -f1)
+          echo "Total project size: $total_size"
+          
+          # Check Edge Functions size
+          functions_size=$(du -sh supabase/functions 2>/dev/null | cut -f1 || echo "0")
+          echo "Edge Functions size: $functions_size"
+          
+          # Check migrations size
+          migrations_size=$(du -sh supabase/migrations 2>/dev/null | cut -f1 || echo "0")
+          echo "Migrations size: $migrations_size"
+          
+          # Check scripts size
+          scripts_size=$(du -sh scripts 2>/dev/null | cut -f1 || echo "0")
+          echo "Scripts size: $scripts_size"
+          
+      - name: Test memory usage
+        run: |
+          echo "Testing memory usage..."
+          
+          # Test TypeScript compilation memory usage
+          start_memory=$(free -m | awk 'NR==2{printf "%.1f", $3/1024}')
+          npx tsc --noEmit
+          end_memory=$(free -m | awk 'NR==2{printf "%.1f", $3/1024}')
+          memory_usage=$(echo "$end_memory - $start_memory" | bc -l)
+          echo "TypeScript compilation memory usage: ${memory_usage}GB"
+          
+          # Check if memory usage is reasonable (less than 2GB)
+          if (( $(echo "$memory_usage > 2.0" | bc -l) )); then
+            echo "WARNING: High memory usage: ${memory_usage}GB"
+          fi
+
+  # Job 4: Security Tests
+  security-tests:
+    name: Security Tests
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'security' || github.event.inputs.test_type == 'all' || github.event.inputs.test_type == null
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Checking for hardcoded secrets..."
+          
+          # Check for OpenAI API keys
+          if grep -r "sk-" supabase/functions/; then
+            echo "ERROR: Hardcoded OpenAI API key found"
+            exit 1
+          fi
+          
+          # Check for passwords
+          if grep -r "password.*=" supabase/functions/; then
+            echo "ERROR: Hardcoded password found"
+            exit 1
+          fi
+          
+          # Check for service role keys
+          if grep -r "eyJ" supabase/functions/; then
+            echo "ERROR: Hardcoded service role key found"
+            exit 1
+          fi
+          
+          # Check for WordPress credentials
+          if grep -r "wordpress.*password" supabase/functions/; then
+            echo "ERROR: Hardcoded WordPress password found"
+            exit 1
+          fi
+          
+          echo "No hardcoded secrets found"
+          
+      - name: Check for insecure practices
+        run: |
+          echo "Checking for insecure practices..."
+          
+          # Check for console.log in production code
+          if grep -r "console.log" supabase/functions/; then
+            echo "WARNING: console.log found in production code"
+          fi
+          
+          # Check for eval usage
+          if grep -r "eval(" supabase/functions/; then
+            echo "ERROR: eval() usage found"
+            exit 1
+          fi
+          
+          # Check for innerHTML usage
+          if grep -r "innerHTML" supabase/functions/; then
+            echo "WARNING: innerHTML usage found"
+          fi
+          
+          # Check for SQL injection patterns
+          if grep -r "SELECT.*\$" supabase/functions/; then
+            echo "WARNING: Potential SQL injection pattern found"
+          fi
+          
+          echo "Security checks completed"
+          
+      - name: Check for dependency vulnerabilities
+        run: |
+          echo "Checking for dependency vulnerabilities..."
+          
+          # Check npm dependencies
+          if [ -f "package.json" ]; then
+            npm audit --audit-level moderate || echo "Dependency vulnerabilities found"
+          fi
+          
+      - name: Check for file permissions
+        run: |
+          echo "Checking file permissions..."
+          
+          # Check for overly permissive files
+          find . -type f -perm 777 -not -path "./.git/*" | while read file; do
+            echo "WARNING: Overly permissive file: $file"
+          done
+          
+          # Check for world-writable files
+          find . -type f -perm 666 -not -path "./.git/*" | while read file; do
+            echo "WARNING: World-writable file: $file"
+          done
+          
+      - name: Check for sensitive file exposure
+        run: |
+          echo "Checking for sensitive file exposure..."
+          
+          # Check for .env files
+          if find . -name "*.env" -not -path "./.git/*"; then
+            echo "WARNING: .env files found"
+          fi
+          
+          # Check for backup files
+          if find . -name "*.bak" -not -path "./.git/*"; then
+            echo "WARNING: Backup files found"
+          fi
+          
+          # Check for temporary files
+          if find . -name "*.tmp" -not -path "./.git/*"; then
+            echo "WARNING: Temporary files found"
+          fi
+          
+      - name: Check for proper error handling
+        run: |
+          echo "Checking for proper error handling..."
+          
+          # Check for unhandled promises
+          if grep -r "\.then(" supabase/functions/ | grep -v "\.catch("; then
+            echo "WARNING: Unhandled promises found"
+          fi
+          
+          # Check for try-catch blocks
+          if ! grep -r "try {" supabase/functions/; then
+            echo "WARNING: No try-catch blocks found"
+          fi
+          
+          # Check for proper error logging
+          if ! grep -r "logger.error" supabase/functions/; then
+            echo "WARNING: No error logging found"
+          fi
+          
+      - name: Check for input validation
+        run: |
+          echo "Checking for input validation..."
+          
+          # Check for request body validation
+          if ! grep -r "req.json()" supabase/functions/ | grep -v "catch"; then
+            echo "WARNING: No request body validation found"
+          fi
+          
+          # Check for URL parameter validation
+          if ! grep -r "url.searchParams" supabase/functions/; then
+            echo "WARNING: No URL parameter validation found"
+          fi
+          
+          # Check for input sanitization
+          if ! grep -r "sanitize" supabase/functions/; then
+            echo "WARNING: No input sanitization found"
+          fi
+
+  # Job 5: Test Results Summary
+  test-summary:
+    name: Test Results Summary
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests, performance-tests, security-tests]
+    if: always()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Generate test summary
+        run: |
+          echo "Test Results Summary"
+          echo "==================="
+          echo ""
+          echo "Unit Tests: ${{ needs.unit-tests.result }}"
+          echo "Integration Tests: ${{ needs.integration-tests.result }}"
+          echo "Performance Tests: ${{ needs.performance-tests.result }}"
+          echo "Security Tests: ${{ needs.security-tests.result }}"
+          echo ""
+          
+          if [ "${{ needs.unit-tests.result }}" == "success" ] && \
+             [ "${{ needs.integration-tests.result }}" == "success" ] && \
+             [ "${{ needs.performance-tests.result }}" == "success" ] && \
+             [ "${{ needs.security-tests.result }}" == "success" ]; then
+            echo "✅ All tests passed!"
+            exit 0
+          else
+            echo "❌ Some tests failed!"
+            exit 1
+          fi

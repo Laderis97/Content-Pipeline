@@ -1,0 +1,330 @@
+
+# Task List: System Deployment & Operations Setup
+
+Based on the analysis of the completed Content Pipeline system, this task list focuses on getting the fully-implemented system up and running in a production environment.
+
+## Relevant Files
+
+*Note: All core system files have been implemented. The following files are relevant for deployment and operations:*
+
+- `supabase/config.toml` - Supabase project configuration ✅
+- `package.json` - Node.js dependencies and scripts ✅
+- `tsconfig.json` - TypeScript configuration for Edge Functions ✅
+- `scripts/setup.sh` - Initial setup script ✅
+- `scripts/deploy.sh` - Main deployment script ✅
+- `scripts/rollback.sh` - Rollback script ✅
+- `scripts/health-check.sh` - Health check script ✅
+- `Makefile` - Build automation and task management ✅
+- `docs/deployment-guide.md` - Comprehensive deployment documentation ✅
+- `docs/deployment-procedures.md` - Deployment and rollback procedures ✅
+- `docs/environment-configuration.md` - Environment configuration documentation ✅
+- `docs/secrets-management.md` - Secrets management documentation ✅
+- `docs/scheduler-setup.md` - Scheduler setup documentation ✅
+- `docs/monitoring-alerting.md` - Monitoring and alerting documentation ✅
+- `docs/backup-disaster-recovery.md` - Backup and disaster recovery documentation ✅
+- `supabase/migrations/` - All database migrations (001-018) ✅ **APPLIED: 001-018**
+- `supabase/functions/` - All Edge Functions and shared utilities ✅ **DEPLOYED: 12/13 functions**
+
+### Notes
+
+- This is a serverless architecture using Supabase Edge Functions
+- All code has been implemented and is ready for deployment
+- Focus is on environment setup, configuration, and operational procedures
+- Testing will be done through integration tests with actual APIs
+
+### Current Deployment Status
+
+**✅ COMPLETED:**
+- Environment Setup & Prerequisites (Tasks 1.1-1.3)
+- Database Setup & Migrations (Tasks 2.1-2.4)
+- Edge Functions Deployment (12/13 functions deployed successfully)
+
+**🔄 IN PROGRESS:**
+- Database connectivity testing (Task 2.5)
+
+**📋 NEXT PRIORITY:**
+- Secrets & Configuration Management (Task 3.0)
+- Complete Edge Functions deployment (1 remaining function)
+- Production testing and validation
+
+## Tasks
+
+- [x] 1.0 Environment Setup & Prerequisites
+  - [x] 1.1 Install and configure Supabase CLI
+    - [x] 1.1.1 Install Supabase CLI globally via npm
+    - [x] 1.1.2 Verify CLI installation and version
+    - [x] 1.1.3 Login to Supabase account
+    - [x] 1.1.4 Configure CLI settings and preferences
+  - [x] 1.2 Set up Supabase project and link local environment
+    - [x] 1.2.1 Create new Supabase project or use existing one
+    - [x] 1.2.2 Link local project to Supabase project
+    - [x] 1.2.3 Verify project connection and access
+    - [x] 1.2.4 Set up project environment variables
+  - [x] 1.3 Install Node.js dependencies and verify build process
+    - [x] 1.3.1 Run npm install to install all dependencies
+    - [x] 1.3.2 Verify TypeScript compilation works
+    - [x] 1.3.3 Test build process for Edge Functions
+    - [x] 1.3.4 Verify all required dependencies are installed
+  - [ ] 1.4 Configure local development environment
+    - [ ] 1.4.1 Set up local environment variables
+    - [ ] 1.4.2 Configure development database connection
+    - [ ] 1.4.3 Set up local testing environment
+    - [ ] 1.4.4 Verify local development setup works
+  - [ ] 1.5 Set up version control and deployment branches
+    - [ ] 1.5.1 Initialize git repository if not already done
+    - [ ] 1.5.2 Set up main and development branches
+    - [ ] 1.5.3 Configure deployment branch protection
+    - [ ] 1.5.4 Set up CI/CD pipeline configuration
+
+- [x] 2.0 Database Setup & Migrations
+  - [x] 2.1 Apply all database migrations in correct order
+    - [x] 2.1.1 Review all migration files (001-018)
+    - [x] 2.1.2 Apply migrations in sequential order
+    - [x] 2.1.3 Verify each migration completes successfully
+    - [x] 2.1.4 Check migration status and history
+  - [x] 2.2 Verify database schema and constraints
+    - [x] 2.2.1 Verify all tables are created correctly
+    - [x] 2.2.2 Check foreign key constraints and relationships
+    - [x] 2.2.3 Validate data types and column definitions
+    - [ ] 2.2.4 Test database constraints and validation rules
+  - [x] 2.3 Set up database indexes and performance optimization
+    - [x] 2.3.1 Verify all performance indexes are created
+    - [ ] 2.3.2 Test index usage and query performance
+    - [ ] 2.3.3 Optimize database configuration settings
+    - [ ] 2.3.4 Set up database connection pooling
+  - [x] 2.4 Configure pg_cron scheduler for automated tasks
+    - [x] 2.4.1 Enable pg_cron extension in database
+    - [x] 2.4.2 Set up scheduled job processing
+    - [x] 2.4.3 Configure monitoring and health check schedules
+    - [x] 2.4.4 Set up sweeper function scheduling
+  - [ ] 2.5 Test database connectivity and RPC functions
+    - [ ] 2.5.1 Test database connection from Edge Functions
+    - [ ] 2.5.2 Verify RPC functions work correctly
+    - [ ] 2.5.3 Test job claiming and status update functions
+    - [ ] 2.5.4 Validate database performance and response times
+
+- [ ] 3.0 Secrets & Configuration Management
+  - [ ] 3.1 Set up Supabase Vault for secrets storage
+    - [ ] 3.1.1 Enable Supabase Vault in project settings
+    - [ ] 3.1.2 Set up vault access permissions
+    - [ ] 3.1.3 Configure vault encryption and security
+    - [ ] 3.1.4 Test vault functionality and access
+  - [ ] 3.2 Configure OpenAI API key and test connectivity
+    - [ ] 3.2.1 Obtain OpenAI API key with appropriate permissions
+    - [ ] 3.2.2 Store API key securely in Supabase Vault
+    - [ ] 3.2.3 Test OpenAI API connectivity and authentication
+    - [ ] 3.2.4 Verify API rate limits and usage quotas
+  - [ ] 3.3 Set up WordPress credentials and test API access
+    - [ ] 3.3.1 Create WordPress user account for content-bot
+    - [ ] 3.3.2 Generate WordPress app password
+    - [ ] 3.3.3 Store credentials securely in Supabase Vault
+    - [ ] 3.3.4 Test WordPress REST API access and permissions
+  - [ ] 3.4 Configure system environment variables
+    - [ ] 3.4.1 Set up WordPress URL and site configuration
+    - [ ] 3.4.2 Configure content generation settings
+    - [ ] 3.4.3 Set up retry and timeout configurations
+    - [ ] 3.4.4 Configure monitoring and alerting settings
+  - [ ] 3.5 Set up default categories, tags, and content settings
+    - [ ] 3.5.1 Configure default WordPress categories
+    - [ ] 3.5.2 Set up default tags for content
+    - [ ] 3.5.3 Configure content word count targets
+    - [ ] 3.5.4 Set up content validation rules
+  - [ ] 3.6 Test all external API integrations
+    - [ ] 3.6.1 Test OpenAI content generation
+    - [ ] 3.6.2 Test WordPress draft post creation
+    - [ ] 3.6.3 Verify API error handling and retry logic
+    - [ ] 3.6.4 Test rate limiting and quota management
+
+- [ ] 4.0 Edge Functions Deployment
+  - [ ] 4.1 Deploy all Edge Functions to Supabase
+    - [ ] 4.1.1 Deploy main content-automation function
+    - [ ] 4.1.2 Deploy concurrent-content-processor function
+    - [ ] 4.1.3 Deploy all monitoring and utility functions
+    - [ ] 4.1.4 Deploy all test functions for validation
+  - [ ] 4.2 Configure function environment variables
+    - [ ] 4.2.1 Set function-specific environment variables
+    - [ ] 4.2.2 Configure function timeout and memory limits
+    - [ ] 4.2.3 Set up function logging and debugging
+    - [ ] 4.2.4 Configure function security and access controls
+  - [ ] 4.3 Set up function authentication and permissions
+    - [ ] 4.3.1 Configure service role authentication
+    - [ ] 4.3.2 Set up anon key access for public endpoints
+    - [ ] 4.3.3 Configure function-level permissions
+    - [ ] 4.3.4 Test authentication and authorization
+  - [ ] 4.4 Test all function endpoints and functionality
+    - [ ] 4.4.1 Test content-automation function endpoints
+    - [ ] 4.4.2 Test monitoring and health check functions
+    - [ ] 4.4.3 Test admin and management functions
+    - [ ] 4.4.4 Verify all function responses and error handling
+  - [ ] 4.5 Configure function monitoring and logging
+    - [ ] 4.5.1 Set up function execution logging
+    - [ ] 4.5.2 Configure performance monitoring
+    - [ ] 4.5.3 Set up error tracking and alerting
+    - [ ] 4.5.4 Configure function metrics collection
+
+- [ ] 5.0 Scheduler & Automation Setup
+  - [ ] 5.1 Configure pg_cron for job processing
+    - [ ] 5.1.1 Set up scheduled job processing (every 30 minutes)
+    - [ ] 5.1.2 Configure concurrent job limits
+    - [ ] 5.1.3 Set up processing time windows
+    - [ ] 5.1.4 Test scheduled job execution
+  - [ ] 5.2 Set up monitoring and health check schedules
+    - [ ] 5.2.1 Schedule hourly health checks
+    - [ ] 5.2.2 Set up daily failure rate monitoring
+    - [ ] 5.2.3 Configure performance metrics collection
+    - [ ] 5.2.4 Test monitoring schedule execution
+  - [ ] 5.3 Configure sweeper function for stale job cleanup
+    - [ ] 5.3.1 Set up sweeper function scheduling
+    - [ ] 5.3.2 Configure stale job detection criteria
+    - [ ] 5.3.3 Set up automatic job reset functionality
+    - [ ] 5.3.4 Test sweeper function operation
+  - [ ] 5.4 Set up alerting system for failure notifications
+    - [ ] 5.4.1 Configure failure rate alert thresholds
+    - [ ] 5.4.2 Set up notification channels (email, Slack)
+    - [ ] 5.4.3 Configure alert escalation procedures
+    - [ ] 5.4.4 Test alert generation and delivery
+  - [ ] 5.5 Test automated job processing workflow
+    - [ ] 5.5.1 Create test content jobs
+    - [ ] 5.5.2 Verify automated job processing
+    - [ ] 5.5.3 Test error handling and retry logic
+    - [ ] 5.5.4 Validate complete end-to-end workflow
+
+- [ ] 6.0 Monitoring & Alerting Configuration
+  - [ ] 6.1 Set up system health monitoring
+    - [ ] 6.1.1 Configure health check endpoints
+    - [ ] 6.1.2 Set up database connectivity monitoring
+    - [ ] 6.1.3 Configure external API health checks
+    - [ ] 6.1.4 Set up function availability monitoring
+  - [ ] 6.2 Configure performance metrics collection
+    - [ ] 6.2.1 Set up response time monitoring
+    - [ ] 6.2.2 Configure throughput and capacity monitoring
+    - [ ] 6.2.3 Set up resource usage monitoring
+    - [ ] 6.2.4 Configure performance trend analysis
+  - [ ] 6.3 Set up failure rate monitoring and alerting
+    - [ ] 6.3.1 Configure daily failure rate calculation
+    - [ ] 6.3.2 Set up failure rate alert thresholds
+    - [ ] 6.3.3 Configure error pattern analysis
+    - [ ] 6.3.4 Set up failure trend monitoring
+  - [ ] 6.4 Configure notification channels (email, Slack, etc.)
+    - [ ] 6.4.1 Set up email notification system
+    - [ ] 6.4.2 Configure Slack integration for alerts
+    - [ ] 6.4.3 Set up SMS notifications for critical alerts
+    - [ ] 6.4.4 Configure notification routing and escalation
+  - [ ] 6.5 Test monitoring system and alert delivery
+    - [ ] 6.5.1 Test health check functionality
+    - [ ] 6.5.2 Test alert generation and delivery
+    - [ ] 6.5.3 Test notification channel functionality
+    - [ ] 6.5.4 Verify alert escalation procedures
+
+- [ ] 7.0 Production Testing & Validation
+  - [ ] 7.1 Create test content jobs and verify processing
+    - [ ] 7.1.1 Create test content jobs with various topics
+    - [ ] 7.1.2 Verify job processing and completion
+    - [ ] 7.1.3 Test content generation quality
+    - [ ] 7.1.4 Validate WordPress draft post creation
+  - [ ] 7.2 Test error handling and retry mechanisms
+    - [ ] 7.2.1 Test OpenAI API error scenarios
+    - [ ] 7.2.2 Test WordPress API error scenarios
+    - [ ] 7.2.3 Verify retry logic and exponential backoff
+    - [ ] 7.2.4 Test graceful degradation functionality
+  - [ ] 7.3 Validate WordPress integration and draft posting
+    - [ ] 7.3.1 Test WordPress authentication
+    - [ ] 7.3.2 Verify draft post creation
+    - [ ] 7.3.3 Test category and tag assignment
+    - [ ] 7.3.4 Validate content formatting and structure
+  - [ ] 7.4 Test concurrent job processing capabilities
+    - [ ] 7.4.1 Create multiple concurrent jobs
+    - [ ] 7.4.2 Verify concurrent processing limits
+    - [ ] 7.4.3 Test job claiming and locking mechanisms
+    - [ ] 7.4.4 Validate performance under load
+  - [ ] 7.5 Verify system performance and response times
+    - [ ] 7.5.1 Test function response times
+    - [ ] 7.5.2 Verify database query performance
+    - [ ] 7.5.3 Test external API response times
+    - [ ] 7.5.4 Validate overall system performance
+  - [ ] 7.6 Test admin operations and manual retry functionality
+    - [ ] 7.6.1 Test manual job retry functionality
+    - [ ] 7.6.2 Test admin job cancellation
+    - [ ] 7.6.3 Test bulk operations
+    - [ ] 7.6.4 Verify admin audit logging
+
+- [ ] 8.0 Documentation & Training
+  - [ ] 8.1 Review and customize deployment documentation
+    - [ ] 8.1.1 Review all deployment documentation
+    - [ ] 8.1.2 Customize documentation for specific environment
+    - [ ] 8.1.3 Update configuration examples
+    - [ ] 8.1.4 Verify documentation accuracy
+  - [ ] 8.2 Set up operational runbooks for team members
+    - [ ] 8.2.1 Create daily operational procedures
+    - [ ] 8.2.2 Set up troubleshooting guides
+    - [ ] 8.2.3 Create emergency response procedures
+    - [ ] 8.2.4 Set up maintenance schedules
+  - [ ] 8.3 Create user guides for content managers
+    - [ ] 8.3.1 Create content job creation guide
+    - [ ] 8.3.2 Set up job monitoring and status checking
+    - [ ] 8.3.3 Create content review and approval process
+    - [ ] 8.3.4 Set up user training materials
+  - [ ] 8.4 Document emergency procedures and contacts
+    - [ ] 8.4.1 Create emergency contact list
+    - [ ] 8.4.2 Document escalation procedures
+    - [ ] 8.4.3 Set up incident response procedures
+    - [ ] 8.4.4 Create communication templates
+  - [ ] 8.5 Train team members on system operation and maintenance
+    - [ ] 8.5.1 Conduct system overview training
+    - [ ] 8.5.2 Train on daily operational procedures
+    - [ ] 8.5.3 Train on troubleshooting and maintenance
+    - [ ] 8.5.4 Conduct emergency response training
+
+- [ ] 9.0 Go-Live Preparation
+  - [ ] 9.1 Perform final system health check
+    - [ ] 9.1.1 Run comprehensive system health check
+    - [ ] 9.1.2 Verify all components are operational
+    - [ ] 9.1.3 Check system performance metrics
+    - [ ] 9.1.4 Validate all integrations are working
+  - [ ] 9.2 Set up production monitoring dashboards
+    - [ ] 9.2.1 Create real-time monitoring dashboard
+    - [ ] 9.2.2 Set up historical performance dashboards
+    - [ ] 9.2.3 Configure alerting dashboard
+    - [ ] 9.2.4 Set up user access to dashboards
+  - [ ] 9.3 Configure backup and disaster recovery procedures
+    - [ ] 9.3.1 Set up automated database backups
+    - [ ] 9.3.2 Configure backup retention policies
+    - [ ] 9.3.3 Test backup restoration procedures
+    - [ ] 9.3.4 Document disaster recovery procedures
+  - [ ] 9.4 Prepare rollback procedures and test them
+    - [ ] 9.4.1 Document rollback procedures
+    - [ ] 9.4.2 Test rollback scripts and procedures
+    - [ ] 9.4.3 Verify rollback can be executed quickly
+    - [ ] 9.4.4 Train team on rollback procedures
+  - [ ] 9.5 Schedule go-live and communicate with stakeholders
+    - [ ] 9.5.1 Schedule go-live date and time
+    - [ ] 9.5.2 Communicate with all stakeholders
+    - [ ] 9.5.3 Set up go-live support team
+    - [ ] 9.5.4 Prepare go-live communication plan
+
+- [ ] 10.0 Post-Deployment Operations
+  - [ ] 10.1 Monitor system performance for first 24 hours
+    - [ ] 10.1.1 Set up 24/7 monitoring for first day
+    - [ ] 10.1.2 Monitor system health and performance
+    - [ ] 10.1.3 Watch for any errors or issues
+    - [ ] 10.1.4 Respond quickly to any problems
+  - [ ] 10.2 Review logs and address any issues
+    - [ ] 10.2.1 Review system logs for errors
+    - [ ] 10.2.2 Analyze performance metrics
+    - [ ] 10.2.3 Address any identified issues
+    - [ ] 10.2.4 Document lessons learned
+  - [ ] 10.3 Collect user feedback and make adjustments
+    - [ ] 10.3.1 Collect feedback from content managers
+    - [ ] 10.3.2 Gather feedback from system administrators
+    - [ ] 10.3.3 Make necessary adjustments and improvements
+    - [ ] 10.3.4 Update documentation based on feedback
+  - [ ] 10.4 Schedule regular maintenance and monitoring
+    - [ ] 10.4.1 Set up regular maintenance schedule
+    - [ ] 10.4.2 Schedule regular system reviews
+    - [ ] 10.4.3 Plan for system updates and improvements
+    - [ ] 10.4.4 Set up ongoing monitoring and alerting
+  - [ ] 10.5 Document lessons learned and update procedures
+    - [ ] 10.5.1 Document deployment lessons learned
+    - [ ] 10.5.2 Update operational procedures
+    - [ ] 10.5.3 Improve documentation based on experience
+    - [ ] 10.5.4 Plan for future system enhancements
