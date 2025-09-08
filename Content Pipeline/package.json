@@ -1,38 +1,25 @@
 {
-  "name": "content-pipeline-automation",
+  "name": "content-pipeline-dashboards",
   "version": "1.0.0",
-  "description": "Daily content automation system using Supabase Edge Functions, OpenAI, and WordPress",
-  "main": "index.js",
+  "description": "Content Pipeline System - Monitoring Dashboards",
+  "main": "server.js",
   "scripts": {
-    "dev": "supabase functions serve",
-    "deploy": "supabase functions deploy",
-    "test": "deno test --allow-net --allow-env",
-    "lint": "deno lint",
-    "format": "deno fmt",
-    "type-check": "deno check"
+    "start": "node server.js",
+    "build": "node build-simple.js",
+    "dev": "node server.js"
   },
   "keywords": [
-    "supabase",
-    "edge-functions",
-    "openai",
-    "wordpress",
-    "content-automation",
-    "seo"
+    "content-pipeline",
+    "monitoring",
+    "dashboards"
   ],
   "author": "Content Pipeline Team",
   "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^20.0.0"
-  },
   "engines": {
     "node": ">=18.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/content-pipeline-automation.git"
-  },
-  "bugs": {
-    "url": "https://github.com/your-org/content-pipeline-automation/issues"
-  },
-  "homepage": "https://github.com/your-org/content-pipeline-automation#readme"
+    "url": "https://github.com/Laderis97/Content-Pipeline.git"
+  }
 }
