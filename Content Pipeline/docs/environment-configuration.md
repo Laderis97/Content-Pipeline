@@ -32,14 +32,15 @@ SUPABASE_URL=https://zjqsfdqhhvhbwqmgdfzn.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqcXNmZHFoaHZoYndxbWdkZnpuIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NzA0NjU4MywiZXhwIjoyMDcyNjIyNTgzfQ.FRhP9rFr5QNiHMqdbSFsdNkO1EZI1ciWRBVFtqLLSKA
 
 # Supabase anonymous key (for client-side operations)
-SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqcXNmZHFoaHZoYndxbWdkZnpuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDY1ODMsImV4cCI6MjA3MjYyMjU4M30.P8mYi9WaOV4HkxdJsbOU_nYo1_bbJkI_1LNlbhT4Ifo
+SUPABASE_ANON_KEY=
+
 ```
 
 #### OpenAI Configuration
 ```bash
 # OpenAI API key
-OPENAI_API_KEY=sk-...
-
+OPENAI_API_KEY=sk-your-openai-api-key-here
+OPENAI_PROJECT_ID=proj_JAjwigD_DLFPpgn3deUcKb425Gw3f_fb1Lm4zuQCd
 # OpenAI model (optional, defaults to gpt-4)
 OPENAI_MODEL=gpt-4
 
@@ -53,13 +54,13 @@ OPENAI_TEMPERATURE=0.7
 #### WordPress Configuration
 ```bash
 # WordPress site URL
-WORDPRESS_URL=https://your-wordpress-site.com
+WORDPRESS_URL=http://automated-content-pipeline-local-test-site.local
 
 # WordPress username
 WORDPRESS_USERNAME=content-bot
 
 # WordPress password (application password)
-WORDPRESS_PASSWORD=your-wordpress-password
+WORDPRESS_PASSWORD=inB4 Er6i Koi4 J7Ls JKkN n3Hu
 
 # WordPress API path (optional, defaults to /wp-json/wp/v2)
 WORDPRESS_API_PATH=/wp-json/wp/v2

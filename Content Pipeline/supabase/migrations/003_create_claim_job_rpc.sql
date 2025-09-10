@@ -20,19 +20,19 @@ BEGIN
     -- Use FOR UPDATE SKIP LOCKED to atomically claim a job
     -- This prevents race conditions when multiple functions try to claim jobs simultaneously
     SELECT 
-        id,
-        topic,
-        status,
-        prompt_template,
-        model,
-        retry_count,
-        tags,
-        categories
+        content_jobs.id,
+        content_jobs.topic,
+        content_jobs.status,
+        content_jobs.prompt_template,
+        content_jobs.model,
+        content_jobs.retry_count,
+        content_jobs.tags,
+        content_jobs.categories
     INTO claimed_job
     FROM content_jobs
-    WHERE status = 'pending' 
-        AND retry_count < 3
-    ORDER BY created_at ASC
+    WHERE content_jobs.status = 'pending' 
+        AND content_jobs.retry_count < 3
+    ORDER BY content_jobs.created_at ASC
     LIMIT 1
     FOR UPDATE SKIP LOCKED;
     

@@ -1,3 +1,30 @@
+#!/bin/bash
+
+# Build script for Render deployment
+# This script prepares the static assets for deployment
+
+echo "🚀 Building Content Pipeline Dashboards for Render..."
+
+# Create public directory
+mkdir -p public
+
+# Copy HTML dashboards
+echo "📄 Copying dashboard HTML files..."
+cp docs/final-system-status-dashboard.html public/index.html
+cp docs/24-7-monitoring-dashboard.html public/monitoring.html
+cp docs/monitoring-dashboard.html public/monitoring-dashboard.html
+cp docs/final-system-status-dashboard.html public/status.html
+
+# Copy any CSS files
+echo "🎨 Copying CSS files..."
+find docs -name "*.css" -exec cp {} public/ \;
+
+# Copy any JS files
+echo "⚡ Copying JavaScript files..."
+find docs -name "*.js" -exec cp {} public/ \;
+
+# Create a simple index page
+cat > public/index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,3 +116,49 @@
     </div>
 </body>
 </html>
+EOF
+
+# Create a robots.txt file
+echo "🤖 Creating robots.txt..."
+cat > public/robots.txt << 'EOF'
+User-agent: *
+Allow: /
+
+Sitemap: https://content-pipeline-dashboards.onrender.com/sitemap.xml
+EOF
+
+# Create a sitemap.xml
+echo "🗺️ Creating sitemap.xml..."
+cat > public/sitemap.xml << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://content-pipeline-dashboards.onrender.com/</loc>
+        <lastmod>2025-09-05</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://content-pipeline-dashboards.onrender.com/monitoring</loc>
+        <lastmod>2025-09-05</lastmod>
+        <changefreq>hourly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://content-pipeline-dashboards.onrender.com/status</loc>
+        <lastmod>2025-09-05</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+</urlset>
+EOF
+
+echo "✅ Build complete! Static assets ready for Render deployment."
+echo "📁 Public directory contents:"
+ls -la public/
+
+echo ""
+echo "🚀 Ready for deployment to Render!"
+echo "📊 Dashboard Hub: /index.html"
+echo "📈 Monitoring: /monitoring.html"
+echo "🔍 Status: /status.html"

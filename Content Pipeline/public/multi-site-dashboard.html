@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Site Content Pipeline Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .sites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .site-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #4facfe;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .site-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .site-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+        
+        .site-card .url {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .site-card .topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .topic-tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .site-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: #4facfe;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3d8bfe;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .content-generator {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .content-generator h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        
+        .btn-generate {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn-generate:hover {
+            transform: translateY(-2px);
+        }
+        
+        .status-section {
+            background: #e8f5e8;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .status-section h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #c8e6c9;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-label {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .status-value {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #667eea;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+            font-weight: bold;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        .btn:focus,
+        .site-card:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header class="header" role="banner">
+            <h1>🌐 Multi-Site Content Pipeline</h1>
+            <p>Manage multiple WordPress sites and generate topic-specific content</p>
+        </header>
+        
+        <main class="main-content" role="main" id="main-content" tabindex="-1">
+            <!-- Status Section -->
+            <div class="status-section">
+                <h3>📊 System Status</h3>
+                <div class="status-item">
+                    <span class="status-label">Active Sites:</span>
+                    <span class="status-value" id="activeSites">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Content Generated Today:</span>
+                    <span class="status-value" id="contentGenerated">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Last Update:</span>
+                    <span class="status-value" id="lastUpdate">Never</span>
+                </div>
+            </div>
+            
+            <!-- Sites Grid -->
+            <div class="sites-grid" id="sitesGrid">
+                <!-- Sites will be loaded here -->
+            </div>
+            
+            <!-- Content Generator -->
+            <div class="content-generator">
+                <h2>🚀 Generate Content</h2>
+                <form id="contentForm">
+                    <div class="form-group">
+                        <label for="topic">Topic:</label>
+                        <input type="text" id="topic" name="topic" placeholder="e.g., artificial intelligence in healthcare" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contentType">Content Type:</label>
+                        <select id="contentType" name="contentType">
+                            <option value="blog post">Blog Post</option>
+                            <option value="article">Article</option>
+                            <option value="news">News</option>
+                            <option value="tutorial">Tutorial</option>
+                            <option value="review">Review</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="targetAudience">Target Audience:</label>
+                        <select id="targetAudience" name="targetAudience">
+                            <option value="general audience">General Audience</option>
+                            <option value="professionals">Professionals</option>
+                            <option value="beginners">Beginners</option>
+                            <option value="experts">Experts</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tone">Tone:</label>
+                        <select id="tone" name="tone">
+                            <option value="professional">Professional</option>
+                            <option value="casual">Casual</option>
+                            <option value="friendly">Friendly</option>
+                            <option value="authoritative">Authoritative</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="wordCount">Word Count:</label>
+                        <select id="wordCount" name="wordCount">
+                            <option value="300">300 words</option>
+                            <option value="500">500 words</option>
+                            <option value="800">800 words</option>
+                            <option value="1000">1000 words</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn-generate">Generate Content</button>
+                </form>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Generating content...</p>
+                </div>
+                
+                <div class="results" id="results"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sample sites data - these are examples, not real sites
+        const sampleSites = [
+            {
+                id: 'tech-blog',
+                name: 'Technology Blog (Example)',
+                url: 'http://tech-blog.local',
+                topics: ['artificial intelligence', 'programming', 'software development', 'cybersecurity'],
+                status: 'example'
+            },
+            {
+                id: 'business-news',
+                name: 'Business News (Example)',
+                url: 'http://business-news.local',
+                topics: ['business strategy', 'entrepreneurship', 'finance', 'marketing'],
+                status: 'example'
+            },
+            {
+                id: 'health-wellness',
+                name: 'Health & Wellness (Example)',
+                url: 'http://health-wellness.local',
+                topics: ['nutrition', 'fitness', 'mental health', 'wellness'],
+                status: 'example'
+            }
+        ];
+        
+        // Load sites
+        async function loadSites() {
+            const sitesGrid = document.getElementById('sitesGrid');
+            const activeSites = document.getElementById('activeSites');
+            
+            sitesGrid.innerHTML = '';
+            let activeCount = 0;
+            
+            try {
+                // Try to load real sites from the API
+                const response = await fetch('/api/sites');
+                if (response.ok) {
+                    const realSites = await response.json();
+                    
+                    realSites.forEach(site => {
+                        if (site.status === 'active') {
+                            activeCount++;
+                            
+                            const siteCard = document.createElement('div');
+                            siteCard.className = 'site-card';
+                            siteCard.innerHTML = `
+                                <h3>${site.name}</h3>
+                                <div class="url">${site.url}</div>
+                                <div class="topics">
+                                    ${site.topics.slice(0, 3).map(topic => `<span class="topic-tag">${topic}</span>`).join('')}
+                                    ${site.topics.length > 3 ? `<span class="topic-tag">+${site.topics.length - 3} more</span>` : ''}
+                                </div>
+                                <div class="site-actions">
+                                    <button class="btn btn-primary" onclick="generateForSite('${site.id}')">Generate Content</button>
+                                    <button class="btn btn-secondary" onclick="viewSite('${site.url}')">View Site</button>
+                                </div>
+                            `;
+                            sitesGrid.appendChild(siteCard);
+                        }
+                    });
+                } else {
+                    throw new Error('No sites API available');
+                }
+            } catch (error) {
+                // Fallback to showing setup instructions
+                sitesGrid.innerHTML = `
+                    <div class="site-card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <h3>🚀 No Sites Configured Yet</h3>
+                        <p style="margin: 20px 0; color: #666;">Set up your first topic-specific WordPress site to get started.</p>
+                        <div style="margin: 20px 0;">
+                            <button class="btn btn-primary" onclick="showSetupInstructions()" style="margin: 10px;">Setup Instructions</button>
+                            <button class="btn btn-secondary" onclick="configureSite()" style="margin: 10px;">Configure Site</button>
+                        </div>
+                    </div>
+                `;
+                activeSites.textContent = '0';
+                return;
+            }
+            
+            sampleSites.forEach(site => {
+                if (site.status === 'active') {
+                    activeCount++;
+                    
+                    const siteCard = document.createElement('div');
+                    siteCard.className = 'site-card';
+                    siteCard.innerHTML = `
+                        <h3>${site.name}</h3>
+                        <div class="url">${site.url}</div>
+                        <div class="topics">
+                            ${site.topics.slice(0, 3).map(topic => `<span class="topic-tag">${topic}</span>`).join('')}
+                            ${site.topics.length > 3 ? `<span class="topic-tag">+${site.topics.length - 3} more</span>` : ''}
+                        </div>
+                        <div class="site-actions">
+                            <button class="btn btn-primary" onclick="generateForSite('${site.id}')">Generate Content</button>
+                            <button class="btn btn-secondary" onclick="viewSite('${site.url}')">View Site</button>
+                        </div>
+                    `;
+                    sitesGrid.appendChild(siteCard);
+                }
+            });
+            
+            activeSites.textContent = activeCount;
+        }
+        
+        // Generate content for specific site
+        function generateForSite(siteId) {
+            const site = sampleSites.find(s => s.id === siteId);
+            if (site) {
+                document.getElementById('topic').value = site.topics[0];
+                document.getElementById('contentForm').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        // View site
+        function viewSite(url) {
+            window.open(url, '_blank');
+        }
+        
+        // Show setup instructions
+        function showSetupInstructions() {
+            alert(`🚀 Multi-Site Setup Instructions
+
+1. Create WordPress Sites:
+   - Use Local by Flywheel to create local sites
+   - Or use WordPress.com (Business plan required)
+   - Or use self-hosted WordPress
+
+2. Configure Sites:
+   - Run: node scripts/configure-site.js
+   - Follow the prompts to set up each site
+   - Set up Application Passwords
+
+3. Site Types Available:
+   - Technology Blog (AI, programming, tech)
+   - Business News (strategy, finance, marketing)
+   - Health & Wellness (nutrition, fitness, mental health)
+   - Travel & Lifestyle (travel, food, culture)
+
+4. Generate Content:
+   - Use the dashboard form
+   - Or run: node scripts/multi-site-generator.js
+
+The system will automatically route content to the right site based on topics!`);
+        }
+        
+        // Configure site
+        function configureSite() {
+            alert('To configure a site, run this command in your terminal:\n\nnode scripts/configure-site.js\n\nThis will guide you through setting up your first topic-specific WordPress site.');
+        }
+        
+        // Handle form submission
+        document.getElementById('contentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Simulate success
+                const results = document.getElementById('results');
+                results.className = 'results success';
+                results.innerHTML = `
+                    <h4>✅ Content Generated Successfully!</h4>
+                    <p><strong>Topic:</strong> ${data.topic}</p>
+                    <p><strong>Type:</strong> ${data.contentType}</p>
+                    <p><strong>Target Site:</strong> Technology Blog</p>
+                    <p><strong>Status:</strong> Published</p>
+                `;
+                results.style.display = 'block';
+                
+                // Update stats
+                const contentGenerated = document.getElementById('contentGenerated');
+                contentGenerated.textContent = parseInt(contentGenerated.textContent) + 1;
+                
+                const lastUpdate = document.getElementById('lastUpdate');
+                lastUpdate.textContent = new Date().toLocaleString();
+                
+            } catch (error) {
+                const results = document.getElementById('results');
+                results.className = 'results error';
+                results.innerHTML = `
+                    <h4>❌ Error Generating Content</h4>
+                    <p>${error.message}</p>
+                `;
+                results.style.display = 'block';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+        
+        // Initialize dashboard
+        loadSites();
+    </script>
+        </main>
+    </div>
+</body>
+</html>

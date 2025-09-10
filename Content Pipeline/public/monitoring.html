@@ -25,6 +25,55 @@
             text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .error {
+            background: #b71c1c;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-weight: bold;
+            border: 2px solid #8d1a1a;
+        }
+
+        .error:focus {
+            outline: 2px solid #ffffff;
+            outline-offset: 2px;
+        }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #1e3c72;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+            font-weight: bold;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        .refresh-btn:focus {
+            outline: 2px solid #ffffff;
+            outline-offset: 2px;
+        }
         
         .header h1 {
             color: white;
@@ -117,12 +166,14 @@
         }
         
         .error {
-            background: #e74c3c;
+            background: #b71c1c;
             color: white;
             padding: 15px;
             border-radius: 10px;
             margin: 20px 0;
             text-align: center;
+            border: 2px solid #8d1a1a;
+            font-weight: bold;
         }
         
         .timestamp {
@@ -134,19 +185,21 @@
     </style>
 </head>
 <body>
-    <div class="header">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header class="header" role="banner">
         <h1>📊 24/7 Monitoring Dashboard</h1>
         <p>Real-time system health and performance monitoring</p>
-    </div>
+    </header>
     
-    <div class="container">
-        <button class="refresh-btn" onclick="loadMonitoringData()">🔄 Refresh Data</button>
+    <main class="container" role="main" id="main-content" tabindex="-1">
+        <button class="refresh-btn" onclick="loadMonitoringData()" aria-describedby="refresh-desc">🔄 Refresh Data</button>
+        <p id="refresh-desc" class="sr-only">Click to refresh monitoring data and update the dashboard</p>
         
-        <div id="loading" class="loading">
+        <div id="loading" class="loading" role="status" aria-live="polite" aria-label="Loading monitoring data">
             Loading monitoring data...
         </div>
         
-        <div id="error" class="error" style="display: none;">
+        <div id="error" class="error" style="display: none;" role="alert" aria-live="assertive">
             Error loading monitoring data. Please try again.
         </div>
         
@@ -341,5 +394,6 @@
         // Auto-refresh every 30 seconds
         setInterval(loadMonitoringData, 30000);
     </script>
+    </main>
 </body>
 </html>

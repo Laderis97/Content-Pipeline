@@ -1,0 +1,156 @@
+<testsuites id="" name="" tests="35" failures="2" skipped="0" errors="0" time="29.272423000000003">
+<testsuite name="accessibility.spec.ts" timestamp="2025-09-10T21:02:48.207Z" hostname="chromium" tests="7" failures="0" skipped="0" time="8.13" errors="0">
+<testcase name="Content Pipeline Accessibility Tests › web interface should not have accessibility violations" classname="accessibility.spec.ts" time="1.909">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › content generator should have proper heading hierarchy" classname="accessibility.spec.ts" time="0.827">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › dashboard should have proper form labels" classname="accessibility.spec.ts" time="0.934">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › monitoring dashboard should have proper color contrast" classname="accessibility.spec.ts" time="1.587">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › multi-site dashboard should be keyboard navigable" classname="accessibility.spec.ts" time="0.715">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › status page should have proper ARIA labels" classname="accessibility.spec.ts" time="0.882">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › all pages should have proper focus management" classname="accessibility.spec.ts" time="1.276">
+</testcase>
+</testsuite>
+<testsuite name="accessibility.spec.ts" timestamp="2025-09-10T21:02:48.207Z" hostname="firefox" tests="7" failures="0" skipped="0" time="27.3" errors="0">
+<testcase name="Content Pipeline Accessibility Tests › web interface should not have accessibility violations" classname="accessibility.spec.ts" time="5.507">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › content generator should have proper heading hierarchy" classname="accessibility.spec.ts" time="4.223">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › dashboard should have proper form labels" classname="accessibility.spec.ts" time="2.125">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › monitoring dashboard should have proper color contrast" classname="accessibility.spec.ts" time="6.043">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › multi-site dashboard should be keyboard navigable" classname="accessibility.spec.ts" time="2.683">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › status page should have proper ARIA labels" classname="accessibility.spec.ts" time="3.121">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › all pages should have proper focus management" classname="accessibility.spec.ts" time="3.598">
+</testcase>
+</testsuite>
+<testsuite name="accessibility.spec.ts" timestamp="2025-09-10T21:02:48.207Z" hostname="webkit" tests="7" failures="1" skipped="0" time="14.911" errors="0">
+<testcase name="Content Pipeline Accessibility Tests › web interface should not have accessibility violations" classname="accessibility.spec.ts" time="3.101">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › content generator should have proper heading hierarchy" classname="accessibility.spec.ts" time="1.121">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › dashboard should have proper form labels" classname="accessibility.spec.ts" time="1.767">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › monitoring dashboard should have proper color contrast" classname="accessibility.spec.ts" time="3.076">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › multi-site dashboard should be keyboard navigable" classname="accessibility.spec.ts" time="1.915">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › status page should have proper ARIA labels" classname="accessibility.spec.ts" time="1.239">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › all pages should have proper focus management" classname="accessibility.spec.ts" time="2.692">
+<failure message="accessibility.spec.ts:76:7 all pages should have proper focus management" type="FAILURE">
+<![CDATA[  [webkit] › accessibility.spec.ts:76:7 › Content Pipeline Accessibility Tests › all pages should have proper focus management 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 0
+
+      90 |       await page.keyboard.press('Tab');
+      91 |       const focusedElement = await page.locator(':focus');
+    > 92 |       expect(await focusedElement.count()).toBe(1);
+         |                                            ^
+      93 |       
+      94 |       // Test that focus indicator is visible
+      95 |       const focusStyles = await focusedElement.evaluate(el => {
+        at C:\Users\leela\Content Pipeline\tests\accessibility.spec.ts:92:44
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\accessibility-Content-Pipe-1267d-ave-proper-focus-management-webkit\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\accessibility-Content-Pipe-1267d-ave-proper-focus-management-webkit\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\accessibility-Content-Pipe-1267d-ave-proper-focus-management-webkit\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|accessibility-Content-Pipe-1267d-ave-proper-focus-management-webkit\test-failed-1.png]]
+
+[[ATTACHMENT|accessibility-Content-Pipe-1267d-ave-proper-focus-management-webkit\video.webm]]
+
+[[ATTACHMENT|accessibility-Content-Pipe-1267d-ave-proper-focus-management-webkit\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="accessibility.spec.ts" timestamp="2025-09-10T21:02:48.207Z" hostname="Mobile Chrome" tests="7" failures="0" skipped="0" time="8.548" errors="0">
+<testcase name="Content Pipeline Accessibility Tests › web interface should not have accessibility violations" classname="accessibility.spec.ts" time="1.859">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › content generator should have proper heading hierarchy" classname="accessibility.spec.ts" time="0.902">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › dashboard should have proper form labels" classname="accessibility.spec.ts" time="0.927">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › monitoring dashboard should have proper color contrast" classname="accessibility.spec.ts" time="1.605">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › multi-site dashboard should be keyboard navigable" classname="accessibility.spec.ts" time="0.862">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › status page should have proper ARIA labels" classname="accessibility.spec.ts" time="0.905">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › all pages should have proper focus management" classname="accessibility.spec.ts" time="1.488">
+</testcase>
+</testsuite>
+<testsuite name="accessibility.spec.ts" timestamp="2025-09-10T21:02:48.207Z" hostname="Mobile Safari" tests="7" failures="1" skipped="0" time="12.756" errors="0">
+<testcase name="Content Pipeline Accessibility Tests › web interface should not have accessibility violations" classname="accessibility.spec.ts" time="3.072">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › content generator should have proper heading hierarchy" classname="accessibility.spec.ts" time="1.458">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › dashboard should have proper form labels" classname="accessibility.spec.ts" time="1.441">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › monitoring dashboard should have proper color contrast" classname="accessibility.spec.ts" time="2.319">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › multi-site dashboard should be keyboard navigable" classname="accessibility.spec.ts" time="1.615">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › status page should have proper ARIA labels" classname="accessibility.spec.ts" time="1.43">
+</testcase>
+<testcase name="Content Pipeline Accessibility Tests › all pages should have proper focus management" classname="accessibility.spec.ts" time="1.421">
+<failure message="accessibility.spec.ts:76:7 all pages should have proper focus management" type="FAILURE">
+<![CDATA[  [Mobile Safari] › accessibility.spec.ts:76:7 › Content Pipeline Accessibility Tests › all pages should have proper focus management 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 1
+    Received: 0
+
+      90 |       await page.keyboard.press('Tab');
+      91 |       const focusedElement = await page.locator(':focus');
+    > 92 |       expect(await focusedElement.count()).toBe(1);
+         |                                            ^
+      93 |       
+      94 |       // Test that focus indicator is visible
+      95 |       const focusStyles = await focusedElement.evaluate(el => {
+        at C:\Users\leela\Content Pipeline\tests\accessibility.spec.ts:92:44
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ..\test-results\accessibility-Content-Pipe-1267d-ave-proper-focus-management-Mobile-Safari\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ..\test-results\accessibility-Content-Pipe-1267d-ave-proper-focus-management-Mobile-Safari\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ..\test-results\accessibility-Content-Pipe-1267d-ave-proper-focus-management-Mobile-Safari\error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|accessibility-Content-Pipe-1267d-ave-proper-focus-management-Mobile-Safari\test-failed-1.png]]
+
+[[ATTACHMENT|accessibility-Content-Pipe-1267d-ave-proper-focus-management-Mobile-Safari\video.webm]]
+
+[[ATTACHMENT|accessibility-Content-Pipe-1267d-ave-proper-focus-management-Mobile-Safari\error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

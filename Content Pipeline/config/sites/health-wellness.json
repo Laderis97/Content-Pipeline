@@ -1,0 +1,53 @@
+{
+  "id": "health-wellness",
+  "name": "Health & Wellness Blog",
+  "url": "http://health-blog-test.local",
+  "username": "admin",
+  "appPassword": "nch1 omeQ 7EPJ RzjU x105 p1KJ",
+  "topics": [
+    "nutrition",
+    "fitness",
+    "mental health",
+    "wellness",
+    "healthy living",
+    "diet",
+    "exercise",
+    "meditation",
+    "stress management",
+    "sleep",
+    "mental wellness",
+    "physical health",
+    "lifestyle",
+    "self-care",
+    "mindfulness"
+  ],
+  "categories": [
+    "Nutrition",
+    "Fitness",
+    "Mental Health",
+    "Wellness",
+    "Healthy Living",
+    "Exercise",
+    "Meditation",
+    "Stress Management"
+  ],
+  "tags": [
+    "health",
+    "wellness",
+    "fitness",
+    "nutrition",
+    "mental-health",
+    "lifestyle",
+    "self-care",
+    "mindfulness",
+    "exercise",
+    "diet",
+    "meditation",
+    "stress-management",
+    "sleep",
+    "healthy-living"
+  ],
+  "status": "active",
+  "description": "Health and wellness content focused on nutrition, fitness, mental health, and overall well-being",
+  "lastUpdated": "2025-01-27T00:00:00Z"
+}

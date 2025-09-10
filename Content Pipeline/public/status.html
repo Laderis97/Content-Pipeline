@@ -42,6 +42,28 @@
             margin: 0 auto;
             padding: 20px;
         }
+
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: #1e3c72;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+            font-weight: bold;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        .refresh-btn:focus {
+            outline: 2px solid #ffffff;
+            outline-offset: 2px;
+        }
         
         .status-grid {
             display: grid;
@@ -134,19 +156,21 @@
     </style>
 </head>
 <body>
-    <div class="header">
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <header class="header" role="banner">
         <h1>📈 System Status Dashboard</h1>
         <p>Content Pipeline System - Overall Status and Performance</p>
-    </div>
+    </header>
     
-    <div class="container">
-        <button class="refresh-btn" onclick="loadStatusData()">🔄 Refresh Status</button>
+    <main class="container" role="main" id="main-content" tabindex="-1">
+        <button class="refresh-btn" onclick="loadStatusData()" aria-label="Refresh system status data" aria-describedby="refresh-desc">🔄 Refresh Status</button>
+        <p id="refresh-desc" class="sr-only">Click to reload the latest system status information</p>
         
-        <div id="loading" class="loading">
+        <div id="loading" class="loading" aria-live="polite" aria-label="Loading system status">
             Loading system status...
         </div>
         
-        <div id="error" class="error" style="display: none;">
+        <div id="error" class="error" style="display: none;" role="alert" aria-live="assertive">
             Error loading status data. Please try again.
         </div>
         
@@ -172,59 +196,59 @@
                     </div>
                 </div>
                 
-                <div class="status-card">
-                    <h3>📊 Job Statistics</h3>
+                <div class="status-card" role="region" aria-labelledby="job-stats-heading">
+                    <h3 id="job-stats-heading">📊 Job Statistics</h3>
                     <div class="metric">
                         <span class="metric-label">Total Jobs</span>
-                        <span class="metric-value" id="total-jobs">0</span>
+                        <span class="metric-value" id="total-jobs" aria-label="Total jobs processed">0</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Completed Today</span>
-                        <span class="metric-value" id="completed-today">0</span>
+                        <span class="metric-value" id="completed-today" aria-label="Jobs completed today">0</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">In Progress</span>
-                        <span class="metric-value" id="in-progress">0</span>
+                        <span class="metric-value" id="in-progress" aria-label="Jobs currently in progress">0</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Success Rate</span>
-                        <span class="metric-value status-healthy" id="success-rate">100%</span>
+                        <span class="metric-value status-healthy" id="success-rate" aria-label="Job success rate">100%</span>
                     </div>
                 </div>
                 
-                <div class="status-card">
-                    <h3>⚡ Performance</h3>
+                <div class="status-card" role="region" aria-labelledby="performance-heading">
+                    <h3 id="performance-heading">⚡ Performance</h3>
                     <div class="metric">
                         <span class="metric-label">Avg Response Time</span>
-                        <span class="metric-value" id="avg-response-time">0ms</span>
+                        <span class="metric-value" id="avg-response-time" aria-label="Average response time">0ms</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Throughput</span>
-                        <span class="metric-value" id="throughput">0 jobs/hour</span>
+                        <span class="metric-value" id="throughput" aria-label="Jobs processed per hour">0 jobs/hour</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Error Rate</span>
-                        <span class="metric-value status-healthy" id="error-rate">0%</span>
+                        <span class="metric-value status-healthy" id="error-rate" aria-label="System error rate">0%</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Uptime</span>
-                        <span class="metric-value status-healthy" id="uptime">99.9%</span>
+                        <span class="metric-value status-healthy" id="uptime" aria-label="System uptime percentage">99.9%</span>
                     </div>
                 </div>
                 
-                <div class="status-card">
-                    <h3>🚨 Alerts</h3>
+                <div class="status-card" role="region" aria-labelledby="alerts-heading">
+                    <h3 id="alerts-heading">🚨 Alerts</h3>
                     <div class="metric">
                         <span class="metric-label">Critical</span>
-                        <span class="metric-value status-healthy" id="critical-alerts">0</span>
+                        <span class="metric-value status-healthy" id="critical-alerts" aria-label="Critical alerts count">0</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Warnings</span>
-                        <span class="metric-value status-healthy" id="warning-alerts">0</span>
+                        <span class="metric-value status-healthy" id="warning-alerts" aria-label="Warning alerts count">0</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Info</span>
-                        <span class="metric-value status-healthy" id="info-alerts">0</span>
+                        <span class="metric-value status-healthy" id="info-alerts" aria-label="Info alerts count">0</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Last Alert</span>
@@ -345,5 +369,6 @@
         // Auto-refresh every 30 seconds
         setInterval(loadStatusData, 30000);
     </script>
+    </main>
 </body>
 </html>

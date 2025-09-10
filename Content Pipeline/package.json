@@ -1,25 +1,46 @@
 {
-  "name": "content-pipeline-dashboards",
+  "name": "content-pipeline-web-interface",
   "version": "1.0.0",
-  "description": "Content Pipeline System - Monitoring Dashboards",
+  "description": "Content Pipeline System - Web Interface for Content Generation",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "build": "node build-simple.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "lint:css": "stylelint '**/*.css' --fix",
+    "lint:css:check": "stylelint '**/*.css'",
+    "test:accessibility": "playwright test tests/accessibility.spec.ts",
+    "test:visual": "playwright test tests/visual-regression.spec.ts",
+    "test:css": "playwright test tests/css-validation.spec.ts",
+    "test:all": "playwright test",
+    "test:ci": "playwright test --reporter=github",
+    "test:lighthouse": "playwright test tests/lighthouse.spec.ts",
+    "install:playwright": "playwright install"
   },
   "keywords": [
     "content-pipeline",
-    "monitoring",
-    "dashboards"
+    "web-interface",
+    "content-generation",
+    "openai",
+    "wordpress"
   ],
   "author": "Content Pipeline Team",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"
   },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Laderis97/Content-Pipeline.git"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "@playwright/test": "^1.55.0",
+    "stylelint": "^16.24.0",
+    "stylelint-config-clean-order": "^7.0.0",
+    "stylelint-config-standard": "^39.0.0"
   }
 }
