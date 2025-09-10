@@ -1,18 +1,48 @@
 # Content Pipeline - Daily Content Automation System
 
-A comprehensive Supabase-based content automation system that generates and publishes daily blog content using OpenAI and WordPress integration.
+A comprehensive Supabase-based content automation system that generates and publishes daily blog content using OpenAI and WordPress integration, featuring a complete modern CSS system built with 2025 best practices.
 
-## 🎨 Modern CSS System (2025)
+## 🎨 Modern CSS System (2025) - NEW!
 
-This project now includes a complete modern CSS system with:
-- OKLCH color space for better color accuracy
-- Container Queries and Subgrid support
-- Fluid typography with clamp()
-- Dark mode support
-- WCAG 2.1 AA accessibility compliance
-- Comprehensive component library
+This project includes a cutting-edge CSS architecture featuring:
 
-## 🚀 Features
+### **Design Tokens & Color System**
+- **OKLCH Color Space**: Superior color accuracy and perceptual uniformity
+- **Fluid Typography**: Responsive text scaling with `clamp()` functions
+- **Comprehensive Spacing**: Consistent 8px grid system
+- **Dark Mode Support**: Automatic detection with manual override
+
+### **Modern CSS Features**
+- **Container Queries**: Component-based responsive design
+- **CSS Grid & Subgrid**: Advanced layout capabilities
+- **Cascade Layers**: Organized CSS architecture
+- **Custom Properties**: Dynamic theming and configuration
+
+### **Component Library**
+- **Button System**: 5 variants × 4 sizes with hover states
+- **Card Components**: Interactive, elevated, and bordered variants
+- **Form Elements**: Accessible inputs with validation states
+- **Navigation**: Pills, vertical, and responsive patterns
+- **Status Indicators**: Success, warning, error, and info states
+- **Alert System**: Contextual feedback with proper ARIA support
+
+### **Accessibility (WCAG 2.1 AA)**
+- **Semantic HTML**: Proper heading hierarchy and landmarks
+- **ARIA Support**: Labels, descriptions, and live regions
+- **Keyboard Navigation**: Full keyboard accessibility
+- **Screen Reader Support**: Optimized for assistive technologies
+- **Color Contrast**: 4.5:1 minimum contrast ratios
+- **Focus Management**: Visible focus indicators and skip links
+
+### **Testing Infrastructure**
+- **Playwright Testing**: Cross-browser automation (Chrome, Firefox, Safari, Mobile)
+- **Axe-core Integration**: Automated accessibility testing
+- **Visual Regression**: Screenshot comparison testing
+- **CSS Validation**: Modern CSS feature verification
+- **Lighthouse Integration**: Performance and SEO auditing
+- **GitHub Actions CI/CD**: Automated testing pipeline
+
+## 🚀 Core Features
 
 - **Automated Content Generation**: AI-powered blog post creation using OpenAI GPT models
 - **WordPress Integration**: Seamless draft posting to WordPress sites
@@ -22,6 +52,63 @@ This project now includes a complete modern CSS system with:
 - **Admin Controls**: Manual retry capabilities and job management
 - **Performance Optimized**: Sub-2-second response times with efficient database operations
 - **Secure**: Secrets management through Supabase Vault
+
+## 🎨 CSS System Usage
+
+### **Quick Start**
+```html
+<!-- Include the main CSS file -->
+<link rel="stylesheet" href="css/main.css">
+
+<!-- Use component classes -->
+<button class="btn btn--primary btn--lg">Primary Button</button>
+<div class="card card--elevated">
+  <div class="card__header">
+    <h3 class="card__title">Card Title</h3>
+  </div>
+  <div class="card__content">
+    <p>Card content goes here</p>
+  </div>
+</div>
+```
+
+### **Design Tokens**
+```css
+/* Use CSS custom properties */
+.my-component {
+  background: var(--color-primary);
+  padding: var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-lg);
+}
+```
+
+### **Dark Mode**
+```css
+/* Automatic dark mode detection */
+@media (prefers-color-scheme: dark) {
+  /* Dark mode styles automatically applied */
+}
+
+/* Manual dark mode toggle */
+[data-theme="dark"] {
+  /* Custom dark theme */
+}
+```
+
+### **Component Variants**
+```html
+<!-- Button variants -->
+<button class="btn btn--primary">Primary</button>
+<button class="btn btn--secondary">Secondary</button>
+<button class="btn btn--ghost">Ghost</button>
+<button class="btn btn--danger">Danger</button>
+
+<!-- Button sizes -->
+<button class="btn btn--sm">Small</button>
+<button class="btn btn--lg">Large</button>
+<button class="btn btn--xl">Extra Large</button>
+```
 
 ## 📋 Prerequisites
 
@@ -312,6 +399,30 @@ content-pipeline/
 3. Make your changes
 4. Test thoroughly
 5. Submit a pull request
+
+## 📚 Documentation
+
+### CSS System
+- [CSS System Guide](docs/css-system-guide.md) - Complete guide to the modern CSS system
+- [Design Best Practices 2025](docs/design-best-practices-2025.md) - Modern CSS and web design principles
+
+### Testing & Deployment
+- [Testing & Deployment Guide](docs/testing-deployment-guide.md) - Comprehensive testing infrastructure
+- [Accessibility Guide](docs/accessibility-guide.md) - WCAG 2.1 AA compliance and testing
+
+### System Documentation
+- [Environment Configuration](docs/environment-configuration.md) - Setup and configuration
+- [Monitoring & Alerting](docs/monitoring-alerting.md) - System monitoring setup
+- [Deployment Guide](docs/deployment-guide.md) - Production deployment
+
+## 🔗 External Resources
+
+- [OKLCH Color Space](https://oklch.com/)
+- [Container Queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Container_Queries)
+- [CSS Cascade Layers](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer)
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+- [Playwright Testing](https://playwright.dev/)
+- [Axe-core Accessibility](https://github.com/dequelabs/axe-core)
 
 ## 📄 License
 
