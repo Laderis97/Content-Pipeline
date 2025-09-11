@@ -4,12 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>System Status Dashboard - Content Pipeline</title>
+    <link rel="stylesheet" href="css/main.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        /* Reset styles are now in main.css */
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -43,22 +40,7 @@
             padding: 20px;
         }
 
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 6px;
-            background: #1e3c72;
-            color: white;
-            padding: 8px;
-            text-decoration: none;
-            border-radius: 4px;
-            z-index: 1000;
-            font-weight: bold;
-        }
-
-        .skip-link:focus {
-            top: 6px;
-        }
+        /* skip-link styles are now in main.css */
 
         .refresh-btn:focus {
             outline: 2px solid #ffffff;
@@ -114,21 +96,7 @@
         .status-error { color: #e74c3c; }
         
         .refresh-btn {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: transform 0.3s;
-            margin: 20px auto;
-            display: block;
-        }
-        
-        .refresh-btn:hover {
-            transform: translateY(-2px);
+            /* Using component classes instead of custom styles */
         }
         
         .loading {
@@ -158,12 +126,23 @@
 <body>
     <a href="#main-content" class="skip-link">Skip to main content</a>
     <header class="header" role="banner">
-        <h1>📈 System Status Dashboard</h1>
-        <p>Content Pipeline System - Overall Status and Performance</p>
+        <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+            <div>
+                <h1>📈 System Status Dashboard</h1>
+                <p>Content Pipeline System - Overall Status and Performance</p>
+            </div>
+            <nav class="nav nav--pills" aria-label="Primary">
+                <a class="nav-link" href="content-generator.html">Generator</a>
+                <a class="nav-link" href="monitoring.html">Monitoring</a>
+                <a class="nav-link nav-link--active" aria-current="page" href="#">Status</a>
+                <button class="btn btn--secondary btn--sm" id="themeToggle" type="button" aria-pressed="false" aria-label="Toggle dark mode">🌙</button>
+            </nav>
+        </div>
     </header>
     
     <main class="container" role="main" id="main-content" tabindex="-1">
-        <button class="refresh-btn" onclick="loadStatusData()" aria-label="Refresh system status data" aria-describedby="refresh-desc">🔄 Refresh Status</button>
+
+        <button class="btn btn--primary btn--lg" onclick="loadStatusData()" aria-label="Refresh system status data" aria-describedby="refresh-desc">🔄 Refresh Status</button>
         <p id="refresh-desc" class="sr-only">Click to reload the latest system status information</p>
         
         <div id="loading" class="loading" aria-live="polite" aria-label="Loading system status">
@@ -261,7 +240,24 @@
         <div class="timestamp" id="last-updated">
             Last updated: Never
         </div>
-    </div>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:var(--space-6) 0;border-top:1px solid var(--color-border);">
+                <div>
+                    <p style="margin:0;color:var(--color-text-muted);font-size:var(--text-sm);">
+                        © 2025 Content Pipeline System. Built with modern CSS and accessibility in mind.
+                    </p>
+                </div>
+                <nav class="nav" aria-label="Footer">
+                    <a href="content-generator.html" class="nav-link" style="font-size:var(--text-sm);">Generator</a>
+                    <a href="monitoring.html" class="nav-link" style="font-size:var(--text-sm);">Monitoring</a>
+                    <a href="status.html" class="nav-link" style="font-size:var(--text-sm);">Status</a>
+                </nav>
+            </div>
+        </div>
+    </footer>
 
     <script>
         const SUPABASE_URL = 'https://zjqsfdqhhvhbwqmgdfzn.supabase.co';
@@ -363,12 +359,37 @@
             }
         }
         
+        // Theme toggle persistence
+        (function initThemeToggle(){
+            const toggle = document.getElementById('themeToggle');
+            if (!toggle) return;
+            const stored = localStorage.getItem('theme');
+            if (stored === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                toggle.setAttribute('aria-pressed', 'true');
+                toggle.textContent = '☀️';
+            }
+            toggle.addEventListener('click', () => {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                if (isDark) {
+                    document.documentElement.removeAttribute('data-theme');
+                    localStorage.removeItem('theme');
+                    toggle.setAttribute('aria-pressed', 'false');
+                    toggle.textContent = '🌙';
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    toggle.setAttribute('aria-pressed', 'true');
+                    toggle.textContent = '☀️';
+                }
+            });
+        })();
+
         // Load data on page load
         document.addEventListener('DOMContentLoaded', loadStatusData);
         
         // Auto-refresh every 30 seconds
         setInterval(loadStatusData, 30000);
     </script>
-    </main>
 </body>
 </html>
