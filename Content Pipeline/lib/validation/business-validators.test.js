@@ -75,9 +75,9 @@ describe('BusinessValidators', () => {
 
             const result = await validators.validateWordPressEndpoint('https://example.com');
             expect(result.valid).toBe(true);
-            expect(result.errors).toHaveLength(1);
-            expect(result.errors[0].message).toContain('does not appear to be a WordPress site');
-            expect(result.errors[0].severity).toBe('warning');
+            expect(result.warnings).toHaveLength(1);
+            expect(result.warnings[0].message).toContain('does not appear to be a WordPress site');
+            expect(result.warnings[0].severity).toBe('warning');
         });
 
         test('should handle API errors', async () => {
@@ -100,7 +100,7 @@ describe('BusinessValidators', () => {
             const result = await validators.validateWordPressEndpoint('https://example.com');
             expect(result.valid).toBe(false);
             expect(result.errors).toHaveLength(1);
-            expect(result.errors[0].message).toContain('WordPress API check failed');
+            expect(result.errors[0].message).toContain('WordPress REST API not accessible');
             expect(result.errors[0].severity).toBe('error');
         });
     });

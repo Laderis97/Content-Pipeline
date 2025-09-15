@@ -11,7 +11,7 @@ describe('SchemaValidator', () => {
     });
 
     describe('validateConfig', () => {
-        test('should validate a correct configuration', () => {
+        test('should validate a correct configuration', async () => {
             const validConfig = {
                 id: 'test-site',
                 name: 'Test Site',
@@ -24,25 +24,25 @@ describe('SchemaValidator', () => {
                 status: 'active'
             };
 
-            const result = validator.validateConfig(validConfig);
+            const result = await validator.validateConfig(validConfig, '', { enableBusinessValidation: false });
             expect(result.valid).toBe(true);
             expect(result.errors).toHaveLength(0);
         });
 
-        test('should reject configuration with missing required fields', () => {
+        test('should reject configuration with missing required fields', async () => {
             const invalidConfig = {
                 id: 'test-site',
                 name: 'Test Site'
                 // Missing required fields
             };
 
-            const result = validator.validateConfig(invalidConfig);
+            const result = await validator.validateConfig(invalidConfig, '', { enableBusinessValidation: false });
             expect(result.valid).toBe(false);
             expect(result.errors.length).toBeGreaterThan(0);
             expect(result.errors.some(error => error.message.includes('Required field'))).toBe(true);
         });
 
-        test('should reject configuration with invalid field types', () => {
+        test('should reject configuration with invalid field types', async () => {
             const invalidConfig = {
                 id: 'test-site',
                 name: 'Test Site',
@@ -55,12 +55,12 @@ describe('SchemaValidator', () => {
                 status: 'active'
             };
 
-            const result = validator.validateConfig(invalidConfig);
+            const result = await validator.validateConfig(invalidConfig, '', { enableBusinessValidation: false });
             expect(result.valid).toBe(false);
             expect(result.errors.some(error => error.message.includes('must be of type'))).toBe(true);
         });
 
-        test('should reject configuration with invalid field formats', () => {
+        test('should reject configuration with invalid field formats', async () => {
             const invalidConfig = {
                 id: 'test-site',
                 name: 'Test Site',
@@ -73,12 +73,12 @@ describe('SchemaValidator', () => {
                 status: 'active'
             };
 
-            const result = validator.validateConfig(invalidConfig);
+            const result = await validator.validateConfig(invalidConfig, '', { enableBusinessValidation: false });
             expect(result.valid).toBe(false);
             expect(result.errors.some(error => error.message.includes('format'))).toBe(true);
         });
 
-        test('should reject configuration with invalid enum values', () => {
+        test('should reject configuration with invalid enum values', async () => {
             const invalidConfig = {
                 id: 'test-site',
                 name: 'Test Site',
@@ -91,12 +91,12 @@ describe('SchemaValidator', () => {
                 status: 'invalid-status' // Invalid enum value
             };
 
-            const result = validator.validateConfig(invalidConfig);
+            const result = await validator.validateConfig(invalidConfig, '', { enableBusinessValidation: false });
             expect(result.valid).toBe(false);
             expect(result.errors.some(error => error.message.includes('must be one of'))).toBe(true);
         });
 
-        test('should reject configuration with empty arrays', () => {
+        test('should reject configuration with empty arrays', async () => {
             const invalidConfig = {
                 id: 'test-site',
                 name: 'Test Site',
@@ -109,12 +109,12 @@ describe('SchemaValidator', () => {
                 status: 'active'
             };
 
-            const result = validator.validateConfig(invalidConfig);
+            const result = await validator.validateConfig(invalidConfig, '', { enableBusinessValidation: false });
             expect(result.valid).toBe(false);
             expect(result.errors.some(error => error.message.includes('must contain at least'))).toBe(true);
         });
 
-        test('should reject configuration with duplicate array items', () => {
+        test('should reject configuration with duplicate array items', async () => {
             const invalidConfig = {
                 id: 'test-site',
                 name: 'Test Site',
@@ -127,12 +127,12 @@ describe('SchemaValidator', () => {
                 status: 'active'
             };
 
-            const result = validator.validateConfig(invalidConfig);
+            const result = await validator.validateConfig(invalidConfig, '', { enableBusinessValidation: false });
             expect(result.valid).toBe(false);
             expect(result.errors.some(error => error.message.includes('unique items'))).toBe(true);
         });
 
-        test('should reject configuration with invalid string patterns', () => {
+        test('should reject configuration with invalid string patterns', async () => {
             const invalidConfig = {
                 id: 'Test-Site', // Invalid pattern (uppercase)
                 name: 'Test Site',
@@ -145,16 +145,16 @@ describe('SchemaValidator', () => {
                 status: 'active'
             };
 
-            const result = validator.validateConfig(invalidConfig);
+            const result = await validator.validateConfig(invalidConfig, '', { enableBusinessValidation: false });
             expect(result.valid).toBe(false);
             expect(result.errors.some(error => error.message.includes('invalid format'))).toBe(true);
         });
     });
 
     describe('validateAllConfigs', () => {
-        test('should validate all configuration files in directory', () => {
+        test('should validate all configuration files in directory', async () => {
             const configDir = path.join(__dirname, '..', '..', 'config', 'sites');
-            const result = validator.validateAllConfigs(configDir);
+            const result = await validator.validateAllConfigs(configDir, { enableBusinessValidation: false });
             
             expect(result).toHaveProperty('valid');
             expect(result).toHaveProperty('totalFiles');
@@ -164,8 +164,8 @@ describe('SchemaValidator', () => {
             expect(Array.isArray(result.errors)).toBe(true);
         });
 
-        test('should handle non-existent directory', () => {
-            const result = validator.validateAllConfigs('/non/existent/directory');
+        test('should handle non-existent directory', async () => {
+            const result = await validator.validateAllConfigs('/non/existent/directory', { enableBusinessValidation: false });
             expect(result.valid).toBe(false);
             expect(result.errors.length).toBeGreaterThan(0);
             expect(result.errors[0].message).toContain('does not exist');
@@ -208,7 +208,7 @@ describe('SchemaValidator', () => {
     });
 
     describe('error formatting', () => {
-        test('should format errors with proper field paths and messages', () => {
+        test('should format errors with proper field paths and messages', async () => {
             const invalidConfig = {
                 id: 'test-site',
                 name: 'Test Site',
@@ -221,7 +221,7 @@ describe('SchemaValidator', () => {
                 status: 'active'
             };
 
-            const result = validator.validateConfig(invalidConfig, '/path/to/file.json');
+            const result = await validator.validateConfig(invalidConfig, '/path/to/file.json', { enableBusinessValidation: false });
             expect(result.valid).toBe(false);
             expect(result.errors.length).toBeGreaterThan(0);
             
