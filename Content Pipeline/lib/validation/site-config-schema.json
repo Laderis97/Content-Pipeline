@@ -1,0 +1,106 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "Site Configuration",
+  "description": "Configuration for a WordPress site in the multi-site content pipeline",
+  "required": ["id", "name", "url", "username", "appPassword", "topics", "categories", "tags", "status"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the site",
+      "pattern": "^[a-z0-9-]+$",
+      "minLength": 3,
+      "maxLength": 50,
+      "examples": ["health-wellness", "tech-blog"]
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable site name",
+      "minLength": 5,
+      "maxLength": 100,
+      "examples": ["Health & Wellness Blog", "Technology Blog"]
+    },
+    "url": {
+      "type": "string",
+      "description": "WordPress site URL",
+      "format": "uri",
+      "pattern": "^https?://.*",
+      "examples": ["http://health-blog-test.local", "https://example.com"]
+    },
+    "username": {
+      "type": "string",
+      "description": "WordPress admin username",
+      "minLength": 3,
+      "maxLength": 50,
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "examples": ["admin", "content-bot"]
+    },
+    "appPassword": {
+      "type": "string",
+      "description": "WordPress application password",
+      "pattern": "^[A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4} [A-Za-z0-9]{4}$",
+      "examples": ["nch1 omeQ 7EPJ RzjU x105 p1KJ", "odNl IaCt 3OYb o4I7 W3sK zGw7"]
+    },
+    "topics": {
+      "type": "array",
+      "description": "List of topics this site covers",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 50
+      },
+      "minItems": 1,
+      "maxItems": 50,
+      "uniqueItems": true,
+      "examples": [["nutrition", "fitness", "mental health"]]
+    },
+    "categories": {
+      "type": "array",
+      "description": "WordPress categories for content",
+      "items": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 50
+      },
+      "minItems": 1,
+      "maxItems": 20,
+      "uniqueItems": true,
+      "examples": [["Nutrition", "Fitness", "Mental Health"]]
+    },
+    "tags": {
+      "type": "array",
+      "description": "WordPress tags for content",
+      "items": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 30,
+        "pattern": "^[a-z0-9-]+$"
+      },
+      "minItems": 1,
+      "maxItems": 30,
+      "uniqueItems": true,
+      "examples": [["health", "wellness", "mental-health"]]
+    },
+    "status": {
+      "type": "string",
+      "description": "Site status",
+      "enum": ["active", "inactive"],
+      "default": "active",
+      "examples": ["active", "inactive"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Site description",
+      "minLength": 10,
+      "maxLength": 500,
+      "examples": ["Health and wellness content focused on nutrition, fitness, mental health, and overall well-being"]
+    },
+    "lastUpdated": {
+      "type": "string",
+      "description": "Last update timestamp",
+      "format": "date-time",
+      "examples": ["2025-01-27T00:00:00Z", "2025-01-27T12:30:45.123Z"]
+    }
+  },
+  "additionalProperties": false
+}
