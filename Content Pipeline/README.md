@@ -52,6 +52,8 @@ This project includes a cutting-edge CSS architecture featuring:
 - **Admin Controls**: Manual retry capabilities and job management
 - **Performance Optimized**: Sub-2-second response times with efficient database operations
 - **Secure**: Secrets management through Supabase Vault
+- **Configuration Validation**: JSON Schema validation for site configurations with comprehensive error reporting
+- **Multi-Site Support**: Dynamic site configuration management with topic-based content routing
 
 ## 🎨 CSS System Usage
 
@@ -222,6 +224,19 @@ supabase functions deploy scheduler
 supabase functions invoke scheduler --method POST --data '{"action": "setup_schedule"}'
 ```
 
+### 7. Validate Site Configurations
+
+```bash
+# Validate all site configurations
+npm run validate:configs
+
+# Validate specific configuration file
+npm run validate:configs -- --file config/sites/health-wellness.json
+
+# Validate with JSON output for CI
+npm run validate:configs:ci
+```
+
 ## 🎯 Usage
 
 ### Creating Content Jobs
@@ -263,6 +278,42 @@ curl -X GET https://your-project.supabase.co/functions/v1/metrics
 
 # Check monitoring status
 curl -X GET https://your-project.supabase.co/functions/v1/monitoring
+```
+
+### Site Configuration Management
+
+```bash
+# Validate all site configurations
+npm run validate:configs
+
+# Validate specific site configuration
+node -e "
+const SchemaValidator = require('./lib/validation/schema-validator');
+const validator = new SchemaValidator();
+const config = require('./config/sites/health-wellness.json');
+const result = validator.validateConfig(config);
+console.log('Validation result:', result);
+"
+
+# Generate new site configuration template
+node -e "
+const fs = require('fs');
+const template = {
+  id: 'new-site',
+  name: 'New Site Name',
+  url: 'https://example.com',
+  username: 'admin',
+  appPassword: 'xxxx xxxx xxxx xxxx xxxx xxxx',
+  topics: ['topic1', 'topic2'],
+  categories: ['Category1', 'Category2'],
+  tags: ['tag1', 'tag2'],
+  status: 'active',
+  description: 'Site description',
+  lastUpdated: new Date().toISOString()
+};
+fs.writeFileSync('config/sites/new-site.json', JSON.stringify(template, null, 2));
+console.log('Template created: config/sites/new-site.json');
+"
 ```
 
 ### Admin Operations
@@ -372,6 +423,15 @@ content-pipeline/
 │   │   ├── _shared/              # Shared utilities
 │   │   └── [function-name]/      # Individual functions
 │   └── migrations/          # Database migrations
+├── lib/
+│   └── validation/         # Configuration validation
+│       ├── schema-validator.js    # Main validation class
+│       ├── schema-validator.test.js # Validation tests
+│       └── site-config-schema.json # JSON Schema definition
+├── config/
+│   └── sites/              # Site configurations
+│       ├── health-wellness.json   # Health site config
+│       └── tech-blog.json         # Tech site config
 ├── docs/                   # Documentation
 ├── scripts/               # Deployment scripts
 └── tasks/                 # Task management
@@ -406,6 +466,12 @@ content-pipeline/
 - [Production Readiness Plan](docs/production-readiness-plan.md) - 90-day roadmap to production
 - [Implementation Guide](docs/implementation-guide.md) - Detailed implementation instructions
 - [Task Tracking Dashboard](docs/task-tracking-dashboard.md) - Real-time progress tracking
+
+### 🔧 Configuration Validation (NEW!)
+- [Site Configuration Analysis](docs/site-configuration-analysis.md) - Configuration patterns and usage analysis
+- [Field Specification](docs/site-configuration-field-specification.md) - Detailed field types and constraints
+- [Business Rules](docs/site-configuration-business-rules.md) - Validation requirements from code analysis
+- [Schema Mapping](docs/site-configuration-schema-mapping.md) - JSON Schema field mapping documentation
 
 ### 📋 PRDs and Task Lists (NEW!)
 - [Schema Validation PRD](tasks/prd-schema-validation-ci-checks.md) - Configuration validation system
