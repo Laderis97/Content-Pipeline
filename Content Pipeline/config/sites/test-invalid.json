@@ -1,0 +1,11 @@
+{
+  "id": "test-invalid",
+  "name": "Test Invalid Config",
+  "url": "not-a-valid-url",
+  "username": "admin",
+  "appPassword": "invalid-format",
+  "topics": [],
+  "categories": [],
+  "tags": [],
+  "status": "invalid-status"
+}
