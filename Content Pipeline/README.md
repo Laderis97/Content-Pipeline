@@ -46,13 +46,14 @@ This project includes a cutting-edge CSS architecture featuring:
 
 - **Automated Content Generation**: AI-powered blog post creation using OpenAI GPT models
 - **WordPress Integration**: Seamless draft posting to WordPress sites
+- **Configuration Validation**: Comprehensive CLI tool with JSON Schema and business logic validation
+- **Multi-Site Management**: Site-specific configurations with validation and error reporting
 - **Concurrent Processing**: Handle multiple content jobs simultaneously (3-5 concurrent jobs)
 - **Robust Error Handling**: Exponential backoff retry logic with graceful degradation
 - **Comprehensive Monitoring**: Real-time health checks, metrics collection, and alerting
 - **Admin Controls**: Manual retry capabilities and job management
 - **Performance Optimized**: Sub-2-second response times with efficient database operations
 - **Secure**: Secrets management through Supabase Vault
-- **Configuration Validation**: JSON Schema validation for site configurations with comprehensive error reporting
 - **Multi-Site Support**: Dynamic site configuration management with topic-based content routing
 
 ## 🎨 CSS System Usage
@@ -235,6 +236,15 @@ npm run validate:configs -- --file config/sites/health-wellness.json
 
 # Validate with JSON output for CI
 npm run validate:configs:ci
+
+# Validate with table output and verbose mode
+npm run validate:configs -- --format table --verbose
+
+# Validate with WordPress endpoint checking
+npm run validate:configs -- --wordpress
+
+# Get help and see all options
+npm run validate:configs -- --help
 ```
 
 ## 🎯 Usage
@@ -426,14 +436,21 @@ content-pipeline/
 ├── lib/
 │   └── validation/         # Configuration validation
 │       ├── schema-validator.js    # Main validation class
-│       ├── schema-validator.test.js # Validation tests
+│       ├── business-validators.js # Business logic validation
+│       ├── schema-validator.test.js # Schema validation tests
+│       ├── business-validators.test.js # Business logic tests
 │       └── site-config-schema.json # JSON Schema definition
 ├── config/
 │   └── sites/              # Site configurations
 │       ├── health-wellness.json   # Health site config
 │       └── tech-blog.json         # Tech site config
-├── docs/                   # Documentation
-├── scripts/               # Deployment scripts
+├── docs/                   # Comprehensive documentation
+│   ├── site-configuration-analysis.md
+│   ├── site-configuration-field-specification.md
+│   ├── site-configuration-business-rules.md
+│   └── site-configuration-schema-mapping.md
+├── scripts/               # Deployment and utility scripts
+│   └── validate-site-configs.js # CLI validation tool
 └── tasks/                 # Task management
 ```
 
