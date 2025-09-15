@@ -5,6 +5,7 @@ const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 const fs = require('fs');
 const path = require('path');
+const BusinessValidators = require('./business-validators');
 
 class SchemaValidator {
     constructor() {
@@ -18,6 +19,9 @@ class SchemaValidator {
         // Load the schema
         this.schema = this.loadSchema();
         this.validate = this.ajv.compile(this.schema);
+        
+        // Initialize business validators
+        this.businessValidators = new BusinessValidators();
     }
 
     loadSchema() {
@@ -25,21 +29,110 @@ class SchemaValidator {
         return JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
     }
 
-    validateConfig(config, filePath = '') {
-        const valid = this.validate(config);
-        
-        if (!valid) {
-            const errors = this.formatErrors(this.validate.errors, filePath);
-            return {
-                valid: false,
-                errors: errors
-            };
+    async validateConfig(config, filePath = '', options = {}) {
+        const result = {
+            valid: true,
+            errors: [],
+            warnings: [],
+            info: []
+        };
+
+        // 1. JSON Schema validation
+        const schemaValid = this.validate(config);
+        if (!schemaValid) {
+            const schemaErrors = this.formatErrors(this.validate.errors, filePath);
+            result.errors.push(...schemaErrors);
+            result.valid = false;
         }
 
-        return {
+        // 2. Business logic validation
+        if (options.enableBusinessValidation !== false) {
+            const businessResult = await this.performBusinessValidation(config, filePath, options);
+            result.errors.push(...businessResult.errors);
+            result.warnings.push(...businessResult.warnings);
+            result.info.push(...businessResult.info);
+            
+            if (!businessResult.valid) {
+                result.valid = false;
+            }
+        }
+
+        return result;
+    }
+
+    async performBusinessValidation(config, filePath = '', options = {}) {
+        const result = {
             valid: true,
-            errors: []
+            errors: [],
+            warnings: [],
+            info: []
         };
+
+        // Required field validation
+        const requiredFields = this.getRequiredFields();
+        const requiredValidation = this.businessValidators.validateRequiredFields(config, requiredFields);
+        if (!requiredValidation.valid) {
+            result.errors.push(...requiredValidation.errors);
+            result.valid = false;
+        }
+
+        // WordPress credentials validation
+        if (config.username && config.appPassword) {
+            const credentialsValidation = this.businessValidators.validateWordPressCredentials(
+                config.username, 
+                config.appPassword
+            );
+            if (!credentialsValidation.valid) {
+                result.errors.push(...credentialsValidation.errors);
+                result.valid = false;
+            }
+        }
+
+        // URL validation
+        if (config.url) {
+            const urlValidation = await this.businessValidators.validateUrl(config.url, 'url');
+            if (!urlValidation.valid) {
+                result.errors.push(...urlValidation.errors);
+                result.valid = false;
+            } else {
+                result.warnings.push(...urlValidation.errors.filter(e => e.severity === 'warning'));
+            }
+
+            // WordPress endpoint validation (if enabled)
+            if (options.validateWordPressEndpoint !== false) {
+                const wpValidation = await this.businessValidators.validateWordPressEndpoint(config.url);
+                if (!wpValidation.valid) {
+                    result.errors.push(...wpValidation.errors);
+                    result.valid = false;
+                } else {
+                    result.warnings.push(...wpValidation.errors.filter(e => e.severity === 'warning'));
+                }
+            }
+        }
+
+        // Timeout validation (if present)
+        if (config.timeout !== undefined) {
+            const timeoutValidation = this.businessValidators.validateTimeout(config.timeout);
+            if (!timeoutValidation.valid) {
+                result.errors.push(...timeoutValidation.errors);
+                result.valid = false;
+            }
+        }
+
+        // Site ID uniqueness validation (if all configs provided)
+        if (options.allConfigs && config.id) {
+            const uniquenessValidation = this.businessValidators.validateSiteIdUniqueness(
+                config.id, 
+                options.allConfigs, 
+                filePath
+            );
+            if (!uniquenessValidation.valid) {
+                result.errors.push(...uniquenessValidation.errors);
+                result.valid = false;
+            }
+        }
+
+        return result;
     }
 
     formatErrors(errors, filePath = '') {
@@ -99,13 +192,15 @@ class SchemaValidator {
         }
     }
 
-    validateAllConfigs(configDir) {
+    async validateAllConfigs(configDir, options = {}) {
         const results = {
             valid: true,
             totalFiles: 0,
             validFiles: 0,
             invalidFiles: 0,
-            errors: []
+            errors: [],
+            warnings: [],
+            info: []
         };
 
         if (!fs.existsSync(configDir)) {
@@ -114,7 +209,9 @@ class SchemaValidator {
                 field: 'directory',
                 message: `Configuration directory does not exist: ${configDir}`,
                 value: null,
-                schema: null
+                schema: null,
+                severity: 'error',
+                category: 'file_system'
             });
             results.valid = false;
             return results;
@@ -125,20 +222,42 @@ class SchemaValidator {
         
         results.totalFiles = jsonFiles.length;
 
-        jsonFiles.forEach(file => {
+        // Load all configs for uniqueness validation
+        const allConfigs = {};
+        for (const file of jsonFiles) {
+            const filePath = path.join(configDir, file);
+            try {
+                const config = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+                allConfigs[file] = config;
+            } catch (parseError) {
+                // Will be handled in validation loop
+            }
+        }
+
+        // Validate each config
+        for (const file of jsonFiles) {
             const filePath = path.join(configDir, file);
             const siteId = file.replace('.json', '');
             
             try {
                 const config = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-                const validation = this.validateConfig(config, filePath);
+                const validationOptions = {
+                    ...options,
+                    allConfigs: allConfigs
+                };
+                
+                const validation = await this.validateConfig(config, filePath, validationOptions);
                 
                 if (validation.valid) {
                     results.validFiles++;
                 } else {
                     results.invalidFiles++;
-                    results.errors.push(...validation.errors);
                 }
+                
+                results.errors.push(...validation.errors);
+                results.warnings.push(...validation.warnings);
+                results.info.push(...validation.info);
+                
             } catch (parseError) {
                 results.invalidFiles++;
                 results.errors.push({
@@ -146,10 +265,12 @@ class SchemaValidator {
                     field: 'json',
                     message: `Invalid JSON: ${parseError.message}`,
                     value: null,
-                    schema: null
+                    schema: null,
+                    severity: 'error',
+                    category: 'json_parse'
                 });
             }
-        });
+        }
 
         if (results.invalidFiles > 0) {
             results.valid = false;
