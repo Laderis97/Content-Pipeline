@@ -402,6 +402,18 @@ content-pipeline/
 
 ## 📚 Documentation
 
+### 🚀 Production Readiness (NEW!)
+- [Production Readiness Plan](docs/production-readiness-plan.md) - 90-day roadmap to production
+- [Implementation Guide](docs/implementation-guide.md) - Detailed implementation instructions
+- [Task Tracking Dashboard](docs/task-tracking-dashboard.md) - Real-time progress tracking
+
+### 📋 PRDs and Task Lists (NEW!)
+- [Schema Validation PRD](tasks/prd-schema-validation-ci-checks.md) - Configuration validation system
+- [Structured Logging PRD](tasks/prd-structured-logging-run-ids.md) - Observability and traceability
+- [Secrets Management PRD](tasks/prd-secrets-backend-credential-rotation.md) - Security and credential management
+- [Generator Instrumentation PRD](tasks/prd-multi-site-generator-instrumentation.md) - Performance monitoring
+- [Pilot Site Selection PRD](tasks/prd-pilot-site-selection-soft-launch.md) - Production launch strategy
+
 ### CSS System
 - [CSS System Guide](docs/css-system-guide.md) - Complete guide to the modern CSS system
 - [Design Best Practices 2025](docs/design-best-practices-2025.md) - Modern CSS and web design principles

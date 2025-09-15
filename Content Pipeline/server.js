@@ -11,6 +11,18 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
+// Load environment variables from .env.local file if it exists
+const envLocalPath = path.join(__dirname, '.env.local');
+if (fs.existsSync(envLocalPath)) {
+  const envContent = fs.readFileSync(envLocalPath, 'utf8');
+  envContent.split('\n').forEach(line => {
+    const [key, value] = line.split('=');
+    if (key && value) {
+      process.env[key.trim()] = value.trim();
+    }
+  });
+}
+
 // Load environment variables from .env file if it exists
 const envPath = path.join(__dirname, '.env');
 if (fs.existsSync(envPath)) {
@@ -386,6 +398,114 @@ app.get('/api/sites', (req, res) => {
   } catch (error) {
     console.error('Error loading sites:', error);
     res.status(500).json({ error: 'Failed to load sites' });
+  }
+});
+
+// Test WordPress site connection
+app.post('/api/test-site', async (req, res) => {
+  try {
+    const { url, username, password } = req.body;
+    
+    if (!url || !username || !password) {
+      return res.status(400).json({ error: 'URL, username, and password are required' });
+    }
+    
+    const apiUrl = `${url.replace(/\/$/, '')}/wp-json/wp/v2`;
+    const auth = Buffer.from(`${username}:${password}`).toString('base64');
+    
+    const urlObj = new URL(url);
+    const isHttps = urlObj.protocol === 'https:';
+    const client = isHttps ? https : http;
+    
+    const options = {
+      hostname: urlObj.hostname,
+      port: urlObj.port || (isHttps ? 443 : 80),
+      path: '/wp-json/wp/v2/users/me',
+      method: 'GET',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    const testPromise = new Promise((resolve, reject) => {
+      const req = client.request(options, (res) => {
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        res.on('end', () => {
+          if (res.statusCode === 200) {
+            resolve({ success: true, data: JSON.parse(data) });
+          } else {
+            reject(new Error(`WordPress API error: ${res.statusCode} - ${data}`));
+          }
+        });
+      });
+      
+      req.on('error', (error) => {
+        reject(error);
+      });
+      
+      req.end();
+    });
+    
+    const result = await testPromise;
+    res.json({ success: true, message: 'WordPress connection successful', user: result.data });
+    
+  } catch (error) {
+    console.error('WordPress connection test failed:', error);
+    res.status(400).json({ 
+      success: false, 
+      error: error.message 
+    });
+  }
+});
+
+// Add new site
+app.post('/api/add-site', (req, res) => {
+  try {
+    const siteData = req.body;
+    
+    if (!siteData.id || !siteData.name || !siteData.url) {
+      return res.status(400).json({ error: 'Site ID, name, and URL are required' });
+    }
+    
+    // Validate site data
+    const requiredFields = ['id', 'name', 'url', 'username', 'appPassword', 'topics', 'categories', 'tags'];
+    for (const field of requiredFields) {
+      if (!siteData[field]) {
+        return res.status(400).json({ error: `Field '${field}' is required` });
+      }
+    }
+    
+    // Create sites directory if it doesn't exist
+    const sitesDir = path.join(__dirname, 'config', 'sites');
+    if (!fs.existsSync(sitesDir)) {
+      fs.mkdirSync(sitesDir, { recursive: true });
+    }
+    
+    // Check if site already exists
+    const siteFilePath = path.join(sitesDir, `${siteData.id}.json`);
+    if (fs.existsSync(siteFilePath)) {
+      return res.status(400).json({ error: 'Site with this ID already exists' });
+    }
+    
+    // Save site configuration
+    fs.writeFileSync(siteFilePath, JSON.stringify(siteData, null, 2));
+    
+    res.json({ 
+      success: true, 
+      message: 'Site added successfully',
+      siteId: siteData.id 
+    });
+    
+  } catch (error) {
+    console.error('Error adding site:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message 
+    });
   }
 });
 

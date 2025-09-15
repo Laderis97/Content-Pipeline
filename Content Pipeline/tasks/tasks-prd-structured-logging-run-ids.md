@@ -1,0 +1,192 @@
+# Task List: Structured Logging with Run IDs
+
+Based on PRD: `prd-structured-logging-run-ids.md`
+
+## Relevant Files
+
+- `lib/logging/structured-logger.js` - Main structured logging library with Winston integration
+- `lib/logging/structured-logger.test.js` - Unit tests for logging library
+- `lib/logging/log-formatter.js` - Custom log formatters and redaction logic
+- `lib/logging/log-formatter.test.js` - Unit tests for log formatting
+- `lib/logging/run-id-generator.js` - UUID generation and run ID management
+- `lib/logging/run-id-generator.test.js` - Unit tests for run ID generation
+- `config/logging-config.js` - Logging configuration for different environments
+- `scripts/multi-site-generator.js` - Updated with structured logging integration
+- `scripts/topic-router.js` - Updated with structured logging integration
+- `scripts/test-wordpress-publishing.js` - Updated with structured logging integration
+- `package.json` - Updated with Winston and logging dependencies
+
+### Notes
+
+- Use Winston.js as the primary logging library
+- Implement log rotation and external aggregation support
+- All sensitive data must be redacted before logging
+- Integration with existing scripts should be non-breaking
+
+## Tasks
+
+- [ ] 1.0 Create Core Logging Infrastructure
+  - [ ] 1.1 Install and configure Winston.js with JSON formatter
+    - [ ] 1.1.1 Install winston, winston-daily-rotate-file, and winston-transport dependencies
+    - [ ] 1.1.2 Create Winston logger instance with JSON formatter
+    - [ ] 1.1.3 Configure log levels and format options
+    - [ ] 1.1.4 Set up logger singleton pattern for consistent usage
+    - [ ] 1.1.5 Add logger configuration validation
+  - [ ] 1.2 Implement UUID v4 run ID generation with correlation tracking
+    - [ ] 1.2.1 Install uuid package for UUID v4 generation
+    - [ ] 1.2.2 Create RunIdGenerator class with correlation tracking
+    - [ ] 1.2.3 Implement run ID propagation across async operations
+    - [ ] 1.2.4 Add run ID context management for nested operations
+    - [ ] 1.2.5 Create run ID validation and format checking
+  - [ ] 1.3 Create structured log formatter with required fields (timestamp, runId, level, message, component, metadata)
+    - [ ] 1.3.1 Design log entry structure with all required fields
+    - [ ] 1.3.2 Implement custom Winston formatter for structured output
+    - [ ] 1.3.3 Add timestamp formatting in ISO 8601 format
+    - [ ] 1.3.4 Create metadata handling for additional context
+    - [ ] 1.3.5 Add component identification for log source tracking
+  - [ ] 1.4 Implement sensitive data redaction for credentials and API keys
+    - [ ] 1.4.1 Create redaction patterns for common credential formats
+    - [ ] 1.4.2 Implement redaction function for API keys, passwords, tokens
+    - [ ] 1.4.3 Add redaction for WordPress credentials and database connections
+    - [ ] 1.4.4 Create configurable redaction rules for different environments
+    - [ ] 1.4.5 Add redaction validation and testing
+  - [ ] 1.5 Add custom log levels for pipeline-specific events (PIPELINE_START, SITE_START, CONTENT_FETCH, etc.)
+    - [ ] 1.5.1 Define custom log levels for pipeline operations
+    - [ ] 1.5.2 Implement level hierarchy and priority system
+    - [ ] 1.5.3 Add level-specific formatting and handling
+    - [ ] 1.5.4 Create level validation and error handling
+    - [ ] 1.5.5 Add level documentation and usage examples
+  - [ ] 1.6 Create comprehensive unit tests for all logging components
+    - [ ] 1.6.1 Test Winston configuration and formatters
+    - [ ] 1.6.2 Test run ID generation and correlation tracking
+    - [ ] 1.6.3 Test sensitive data redaction functionality
+    - [ ] 1.6.4 Test custom log levels and formatting
+    - [ ] 1.6.5 Test error handling and edge cases
+
+- [ ] 2.0 Configure Log Transports and Aggregation
+  - [ ] 2.1 Set up file transport with log rotation for local logging
+    - [ ] 2.1.1 Configure winston-daily-rotate-file transport
+    - [ ] 2.1.2 Set up log rotation by date and size
+    - [ ] 2.1.3 Configure log file naming and directory structure
+    - [ ] 2.1.4 Add log compression and cleanup policies
+    - [ ] 2.1.5 Test log rotation and file management
+  - [ ] 2.2 Implement external log aggregation transport (DataDog/Splunk integration)
+    - [ ] 2.2.1 Choose and configure external log aggregation service
+    - [ ] 2.2.2 Create custom Winston transport for external service
+    - [ ] 2.2.3 Implement authentication and connection handling
+    - [ ] 2.2.4 Add retry logic and error handling for external transport
+    - [ ] 2.2.5 Test external log delivery and formatting
+  - [ ] 2.3 Create environment-specific logging configuration (dev/staging/prod)
+    - [ ] 2.3.1 Create logging configuration files for each environment
+    - [ ] 2.3.2 Configure different log levels per environment
+    - [ ] 2.3.3 Set up environment-specific transports and destinations
+    - [ ] 2.3.4 Add environment validation and fallback configuration
+    - [ ] 2.3.5 Test configuration loading and environment switching
+  - [ ] 2.4 Add async logging support to prevent blocking operations
+    - [ ] 2.4.1 Configure Winston for asynchronous logging
+    - [ ] 2.4.2 Implement log queuing and batching
+    - [ ] 2.4.3 Add backpressure handling for high-volume logging
+    - [ ] 2.4.4 Create performance monitoring for logging operations
+    - [ ] 2.4.5 Test async logging under load conditions
+  - [ ] 2.5 Implement error handling and fallback logging for transport failures
+    - [ ] 2.5.1 Add error handling for transport failures
+    - [ ] 2.5.2 Implement fallback logging to local files
+    - [ ] 2.5.3 Create error notification system for logging failures
+    - [ ] 2.5.4 Add health checks for logging transports
+    - [ ] 2.5.5 Test failure scenarios and recovery procedures
+
+- [ ] 3.0 Integrate Logging into Multi-Site Generator
+  - [ ] 3.1 Add structured logging to main pipeline execution flow
+    - [ ] 3.1.1 Add logging to main() function with run ID generation
+    - [ ] 3.1.2 Log pipeline start/end events with timing
+    - [ ] 3.1.3 Add logging to generateBatchContent() function
+    - [ ] 3.1.4 Log content generation progress and status
+    - [ ] 3.1.5 Add error logging with context and stack traces
+  - [ ] 3.2 Implement run ID propagation across all pipeline components
+    - [ ] 3.2.1 Pass run ID to all pipeline functions and callbacks
+    - [ ] 3.2.2 Add run ID to async operation contexts
+    - [ ] 3.2.3 Implement run ID tracking for parallel operations
+    - [ ] 3.2.4 Add run ID validation and error handling
+    - [ ] 3.2.5 Test run ID propagation across all components
+  - [ ] 3.3 Add timing information for all major operations
+    - [ ] 3.3.1 Add timing to site processing operations
+    - [ ] 3.3.2 Log WordPress publishing timing and performance
+    - [ ] 3.3.3 Add timing to content generation and routing
+    - [ ] 3.3.4 Implement performance metrics collection
+    - [ ] 3.3.5 Add timing analysis and reporting
+  - [ ] 3.4 Log site processing start/end with metadata
+    - [ ] 3.4.1 Add site-specific logging to findBestSiteForTopic()
+    - [ ] 3.4.2 Log site selection criteria and scoring
+    - [ ] 3.4.3 Add site processing metadata (topics, categories, tags)
+    - [ ] 3.4.4 Log site processing results and outcomes
+    - [ ] 3.4.5 Add site-specific error context and debugging info
+  - [ ] 3.5 Add error context logging with stack traces and component information
+    - [ ] 3.5.1 Enhance error logging in publishToWordPress()
+    - [ ] 3.5.2 Add error context to content generation failures
+    - [ ] 3.5.3 Log WordPress API errors with response details
+    - [ ] 3.5.4 Add error correlation across pipeline components
+    - [ ] 3.5.5 Implement error severity classification and handling
+
+- [ ] 4.0 Integrate Logging into Supporting Scripts
+  - [ ] 4.1 Update topic-router.js with structured logging
+    - [ ] 4.1.1 Add logging to loadSiteConfigs() function
+    - [ ] 4.1.2 Log site configuration loading and validation
+    - [ ] 4.1.3 Add logging to content routing decisions
+    - [ ] 4.1.4 Log topic matching and site selection logic
+    - [ ] 4.1.5 Add error logging for configuration issues
+  - [ ] 4.2 Update WordPress publishing scripts with logging and retry context
+    - [ ] 4.2.1 Add logging to test-wordpress-publishing.js
+    - [ ] 4.2.2 Log WordPress connection attempts and results
+    - [ ] 4.2.3 Add retry attempt logging with context
+    - [ ] 4.2.4 Log publishing success/failure with detailed metrics
+    - [ ] 4.2.5 Add WordPress API response logging
+  - [ ] 4.3 Add logging to configuration validation and site management scripts
+    - [ ] 4.3.1 Add logging to site configuration validation
+    - [ ] 4.3.2 Log site management operations and changes
+    - [ ] 4.3.3 Add logging to setup and deployment scripts
+    - [ ] 4.3.4 Log system health checks and monitoring
+    - [ ] 4.3.5 Add logging to rollback and recovery operations
+  - [ ] 4.4 Implement correlation between related operations across scripts
+    - [ ] 4.4.1 Pass run IDs between related scripts
+    - [ ] 4.4.2 Add operation correlation tracking
+    - [ ] 4.4.3 Log cross-script operation dependencies
+    - [ ] 4.4.4 Add correlation validation and error handling
+    - [ ] 4.4.5 Test end-to-end operation correlation
+  - [ ] 4.5 Add performance metrics logging for optimization insights
+    - [ ] 4.5.1 Log performance metrics for all major operations
+    - [ ] 4.5.2 Add resource usage logging (memory, CPU)
+    - [ ] 4.5.3 Log throughput metrics and bottlenecks
+    - [ ] 4.5.4 Add performance trend analysis
+    - [ ] 4.5.5 Create performance optimization recommendations
+
+- [ ] 5.0 Testing and Documentation
+  - [ ] 5.1 Create integration tests for end-to-end logging flow
+    - [ ] 5.1.1 Test complete pipeline logging from start to finish
+    - [ ] 5.1.2 Test run ID propagation across all components
+    - [ ] 5.1.3 Test log aggregation and external service delivery
+    - [ ] 5.1.4 Test error logging and recovery scenarios
+    - [ ] 5.1.5 Test performance under high-volume logging
+  - [ ] 5.2 Test log aggregation and external service integration
+    - [ ] 5.2.1 Test DataDog/Splunk integration and log delivery
+    - [ ] 5.2.2 Test log format compatibility with external services
+    - [ ] 5.2.3 Test authentication and connection handling
+    - [ ] 5.2.4 Test retry logic and error recovery
+    - [ ] 5.2.5 Test log search and filtering in external services
+  - [ ] 5.3 Validate sensitive data redaction across all scenarios
+    - [ ] 5.3.1 Test redaction of all credential types
+    - [ ] 5.3.2 Test redaction in different log formats and transports
+    - [ ] 5.3.3 Test redaction edge cases and special characters
+    - [ ] 5.3.4 Test redaction performance impact
+    - [ ] 5.3.5 Validate no sensitive data leaks in logs
+  - [ ] 5.4 Create logging best practices documentation for developers
+    - [ ] 5.4.1 Document logging standards and conventions
+    - [ ] 5.4.2 Create examples for different logging scenarios
+    - [ ] 5.4.3 Document run ID usage and correlation patterns
+    - [ ] 5.4.4 Create troubleshooting guide for logging issues
+    - [ ] 5.4.5 Add performance guidelines for logging
+  - [ ] 5.5 Add monitoring and alerting setup for log aggregation health
+    - [ ] 5.5.1 Set up monitoring for log transport health
+    - [ ] 5.5.2 Create alerts for logging failures and issues
+    - [ ] 5.5.3 Add monitoring for log volume and performance
+    - [ ] 5.5.4 Create dashboards for logging system health
+    - [ ] 5.5.5 Test monitoring and alerting functionality

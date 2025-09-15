@@ -1,0 +1,169 @@
+# Task List: Schema Validation and CI Checks for Site Configurations
+
+Based on PRD: `prd-schema-validation-ci-checks.md`
+
+## Relevant Files
+
+- `lib/validation/schema-validator.js` - Main validation library with JSON schema and business logic validation
+- `lib/validation/schema-validator.test.js` - Unit tests for validation library
+- `lib/validation/site-config-schema.json` - JSON Schema definition for site configurations
+- `scripts/validate-site-configs.js` - CLI tool for validating site configurations
+- `scripts/validate-site-configs.test.js` - Unit tests for CLI validation tool
+- `.husky/pre-commit` - Pre-commit hook configuration
+- `.github/workflows/validate-configs.yml` - GitHub Actions workflow for configuration validation
+- `package.json` - Updated with validation dependencies and scripts
+- `config/sites/schema-examples.md` - Documentation and examples for site configuration schema
+
+### Notes
+
+- Unit tests should be placed alongside the code files they are testing
+- Use `npm test` to run all tests found by Jest configuration
+- Pre-commit hooks will be managed by husky
+- Validation will integrate with existing Makefile commands
+
+## Tasks
+
+- [ ] 1.0 Create JSON Schema Definition and Validation Library
+  - [ ] 1.1 Analyze existing site configuration files to understand current structure and patterns
+    - [ ] 1.1.1 Review all files in `config/sites/` directory to identify common patterns
+    - [ ] 1.1.2 Document current field types, required vs optional fields, and value constraints
+    - [ ] 1.1.3 Identify business rules and validation requirements from existing code
+    - [ ] 1.1.4 Create field mapping documentation for schema design
+  - [ ] 1.2 Create comprehensive JSON Schema definition for site configurations with all required and optional fields
+    - [ ] 1.2.1 Define base schema structure with required fields (id, name, url, username, appPassword, topics, categories, tags, status)
+    - [ ] 1.2.2 Add optional fields (description, lastUpdated, custom settings)
+    - [ ] 1.2.3 Define data types and constraints for each field
+    - [ ] 1.2.4 Add enum values for status field and other constrained fields
+    - [ ] 1.2.5 Create schema validation for array fields (topics, categories, tags)
+  - [ ] 1.3 Implement main validation library with ajv for JSON Schema validation
+    - [ ] 1.3.1 Install ajv and ajv-formats dependencies
+    - [ ] 1.3.2 Create SchemaValidator class with ajv integration
+    - [ ] 1.3.3 Implement validateConfig method for single file validation
+    - [ ] 1.3.4 Add validateAllConfigs method for directory validation
+    - [ ] 1.3.5 Implement error collection and reporting functionality
+  - [ ] 1.4 Add business logic validation functions (URL validation, timeout ranges, required field checks)
+    - [ ] 1.4.1 Implement URL validation for site URLs and WordPress endpoints
+    - [ ] 1.4.2 Add timeout value validation (1-300 seconds range)
+    - [ ] 1.4.3 Create required field presence and non-empty validation
+    - [ ] 1.4.4 Add WordPress credential format validation
+    - [ ] 1.4.5 Implement topic/category/tag content validation
+  - [ ] 1.5 Create detailed error reporting with field paths and actionable messages
+    - [ ] 1.5.1 Design error message format with file path, line number, and field path
+    - [ ] 1.5.2 Implement actionable error messages with fix suggestions
+    - [ ] 1.5.3 Add error severity levels (error, warning, info)
+    - [ ] 1.5.4 Create error summary reporting with counts and categories
+  - [ ] 1.6 Add comprehensive unit tests for all validation rules and edge cases
+    - [ ] 1.6.1 Create test fixtures with valid and invalid configuration examples
+    - [ ] 1.6.2 Test all JSON Schema validation rules
+    - [ ] 1.6.3 Test all business logic validation functions
+    - [ ] 1.6.4 Test error reporting and message formatting
+    - [ ] 1.6.5 Test edge cases (malformed JSON, missing files, empty directories)
+
+- [ ] 2.0 Create CLI Validation Tool
+  - [ ] 2.1 Implement command-line interface for validating site configurations
+    - [ ] 2.1.1 Create CLI entry point with commander.js or yargs
+    - [ ] 2.1.2 Add support for --file and --directory options
+    - [ ] 2.1.3 Implement --format option for output formatting (json, text, table)
+    - [ ] 2.1.4 Add --verbose and --quiet options for output control
+    - [ ] 2.1.5 Create help documentation and usage examples
+  - [ ] 2.2 Add support for validating single files or entire config directory
+    - [ ] 2.2.1 Implement single file validation with detailed error reporting
+    - [ ] 2.2.2 Add directory validation with recursive file discovery
+    - [ ] 2.2.3 Create file filtering to only process .json files
+    - [ ] 2.2.4 Add validation summary with pass/fail counts
+  - [ ] 2.3 Implement colored output and progress indicators for user experience
+    - [ ] 2.3.1 Add chalk.js for colored console output
+    - [ ] 2.3.2 Implement progress bars for directory validation
+    - [ ] 2.3.3 Add success/error/warning color coding
+    - [ ] 2.3.4 Create loading indicators for long-running operations
+  - [ ] 2.4 Add JSON and text output formats for different use cases
+    - [ ] 2.4.1 Implement JSON output with structured error data
+    - [ ] 2.4.2 Create human-readable text output format
+    - [ ] 2.4.3 Add table format for summary reporting
+    - [ ] 2.4.4 Implement output redirection to files
+  - [ ] 2.5 Create unit tests for CLI tool functionality
+    - [ ] 2.5.1 Test all CLI options and argument parsing
+    - [ ] 2.5.2 Test output formatting for different options
+    - [ ] 2.5.3 Test error handling and exit codes
+    - [ ] 2.5.4 Test integration with validation library
+
+- [ ] 3.0 Integrate Pre-commit Hooks
+  - [ ] 3.1 Install and configure husky for Git hook management
+    - [ ] 3.1.1 Install husky and lint-staged as dev dependencies
+    - [ ] 3.1.2 Initialize husky with npx husky install
+    - [ ] 3.1.3 Create .husky directory and configure Git hooks
+    - [ ] 3.1.4 Add husky install to package.json prepare script
+  - [ ] 3.2 Create pre-commit hook that validates all site configurations
+    - [ ] 3.2.1 Create .husky/pre-commit script
+    - [ ] 3.2.2 Add validation command to pre-commit hook
+    - [ ] 3.2.3 Configure hook to run on config/sites/ directory changes
+    - [ ] 3.2.4 Add hook to validate staged files only
+  - [ ] 3.3 Ensure hook prevents commits when validation fails
+    - [ ] 3.3.1 Implement proper exit codes for validation success/failure
+    - [ ] 3.3.2 Test commit prevention with invalid configurations
+    - [ ] 3.3.3 Add clear error messages when commits are blocked
+    - [ ] 3.3.4 Create bypass option for emergency commits (--no-verify)
+  - [ ] 3.4 Add developer-friendly error messages and guidance
+    - [ ] 3.4.1 Create clear error messages with file locations
+    - [ ] 3.4.2 Add fix suggestions for common validation errors
+    - [ ] 3.4.3 Provide links to documentation and examples
+    - [ ] 3.4.4 Add quick-fix commands for common issues
+  - [ ] 3.5 Test pre-commit hook with valid and invalid configurations
+    - [ ] 3.5.1 Test successful commit with valid configuration
+    - [ ] 3.5.2 Test blocked commit with invalid configuration
+    - [ ] 3.5.3 Test partial validation with staged files only
+    - [ ] 3.5.4 Test hook performance with large configuration sets
+
+- [ ] 4.0 Set Up CI Pipeline Integration
+  - [ ] 4.1 Create GitHub Actions workflow for configuration validation
+    - [ ] 4.1.1 Create .github/workflows/validate-configs.yml
+    - [ ] 4.1.2 Configure workflow to run on pull requests and pushes
+    - [ ] 4.1.3 Add Node.js setup and dependency installation
+    - [ ] 4.1.4 Configure workflow to run validation on all config files
+  - [ ] 4.2 Integrate validation into existing CI pipeline or create new workflow
+    - [ ] 4.2.1 Check existing CI workflows for integration points
+    - [ ] 4.2.2 Add validation step to existing workflow or create standalone
+    - [ ] 4.2.3 Ensure validation runs before deployment steps
+    - [ ] 4.2.4 Configure workflow dependencies and caching
+  - [ ] 4.3 Add validation step that runs on all pull requests and pushes
+    - [ ] 4.3.1 Configure workflow triggers for pull_request and push events
+    - [ ] 4.3.2 Add path filters to run only when config files change
+    - [ ] 4.3.3 Configure workflow to run on all branches
+    - [ ] 4.3.4 Add workflow status checks for branch protection
+  - [ ] 4.4 Configure CI to fail when validation errors are detected
+    - [ ] 4.4.1 Set proper exit codes for validation failure
+    - [ ] 4.4.2 Configure workflow to fail on validation errors
+    - [ ] 4.4.3 Add error reporting in CI output
+    - [ ] 4.4.4 Test CI failure scenarios with invalid configurations
+  - [ ] 4.5 Add validation summary reporting in CI output
+    - [ ] 4.5.1 Create summary report with validation results
+    - [ ] 4.5.2 Add file-by-file validation status
+    - [ ] 4.5.3 Include error counts and categories
+    - [ ] 4.5.4 Add performance metrics (validation time, file count)
+
+- [ ] 5.0 Update Build System and Documentation
+  - [ ] 5.1 Add validation commands to package.json scripts
+    - [ ] 5.1.1 Add "validate:configs" script for manual validation
+    - [ ] 5.1.2 Add "validate:configs:ci" script for CI environment
+    - [ ] 5.1.3 Add "validate:configs:watch" script for development
+    - [ ] 5.1.4 Update existing scripts to include validation
+  - [ ] 5.2 Update Makefile to include configuration validation targets
+    - [ ] 5.2.1 Add validate-configs target to Makefile
+    - [ ] 5.2.2 Add validate-configs-ci target for CI
+    - [ ] 5.2.3 Integrate validation into existing check and test targets
+    - [ ] 5.2.4 Add validation to deployment prerequisites
+  - [ ] 5.3 Create comprehensive documentation for site configuration schema
+    - [ ] 5.3.1 Create schema documentation with field descriptions
+    - [ ] 5.3.2 Add examples for all configuration options
+    - [ ] 5.3.3 Document validation rules and business logic
+    - [ ] 5.3.4 Create troubleshooting guide for common issues
+  - [ ] 5.4 Add examples and best practices for configuration files
+    - [ ] 5.4.1 Create example configuration files for different site types
+    - [ ] 5.4.2 Document best practices for configuration management
+    - [ ] 5.4.3 Add migration guide for existing configurations
+    - [ ] 5.4.4 Create configuration template generator
+  - [ ] 5.5 Update existing documentation to reference new validation requirements
+    - [ ] 5.5.1 Update README.md with validation information
+    - [ ] 5.5.2 Update deployment documentation with validation steps
+    - [ ] 5.5.3 Update developer onboarding guide
+    - [ ] 5.5.4 Update production readiness plan with validation status

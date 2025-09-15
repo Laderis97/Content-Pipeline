@@ -303,6 +303,65 @@
                     <span class="status-label">Last Update:</span>
                     <span class="status-value" id="lastUpdate">Never</span>
                 </div>
+                <div class="status-item">
+                    <button class="btn btn-primary" onclick="loadSites()" style="margin-top: 10px;">🔄 Refresh Sites</button>
+                </div>
+            </div>
+            
+            <!-- Add Site Section -->
+            <div class="add-site-section" style="background: #f8f9fa; border-radius: 10px; padding: 20px; margin-bottom: 30px;">
+                <h3>➕ Add New Site</h3>
+                <button class="btn btn-primary" onclick="toggleAddSiteForm()" id="addSiteBtn">Add New WordPress Site</button>
+                
+                <div id="addSiteForm" style="display: none; margin-top: 20px;">
+                    <form id="newSiteForm">
+                        <div class="form-group">
+                            <label for="siteId">Site ID (unique identifier):</label>
+                            <input type="text" id="siteId" name="siteId" placeholder="e.g., my-blog" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="siteName">Site Name:</label>
+                            <input type="text" id="siteName" name="siteName" placeholder="e.g., My Awesome Blog" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="siteUrl">WordPress URL:</label>
+                            <input type="url" id="siteUrl" name="siteUrl" placeholder="http://my-blog.local" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="siteUsername">WordPress Username:</label>
+                            <input type="text" id="siteUsername" name="siteUsername" placeholder="admin" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sitePassword">Application Password:</label>
+                            <input type="password" id="sitePassword" name="sitePassword" placeholder="xxxx xxxx xxxx xxxx xxxx xxxx" required>
+                            <small style="color: #666;">Get this from WordPress Admin > Users > Your Profile > Application Passwords</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="siteTopics">Topics (comma-separated):</label>
+                            <textarea id="siteTopics" name="siteTopics" placeholder="artificial intelligence, programming, web development" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="siteCategories">Categories (comma-separated):</label>
+                            <textarea id="siteCategories" name="siteCategories" placeholder="AI & Machine Learning, Programming, Web Development" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="siteTags">Tags (comma-separated):</label>
+                            <textarea id="siteTags" name="siteTags" placeholder="tech, programming, AI, development" required></textarea>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button type="submit" class="btn btn-primary">Add Site</button>
+                            <button type="button" class="btn btn-secondary" onclick="toggleAddSiteForm()">Cancel</button>
+                        </div>
+                    </form>
+                </div>
             </div>
             
             <!-- Sites Grid -->
@@ -412,6 +471,10 @@
                 const response = await fetch('/api/sites');
                 if (response.ok) {
                     const realSites = await response.json();
+                    console.log('Loaded sites from API:', realSites);
+                    
+                    // Store sites globally for other functions
+                    window.loadedSites = realSites;
                     
                     realSites.forEach(site => {
                         if (site.status === 'active') {
@@ -434,11 +497,23 @@
                             sitesGrid.appendChild(siteCard);
                         }
                     });
+                    
+                    // Update active sites count
+                    activeSites.textContent = activeCount;
+                    
+                    // If we found active sites, we're done
+                    if (activeCount > 0) {
+                        return;
+                    }
                 } else {
                     throw new Error('No sites API available');
                 }
             } catch (error) {
-                // Fallback to showing setup instructions
+                console.error('Error loading sites:', error);
+            }
+            
+            // Fallback to showing setup instructions if no active sites found
+            if (activeCount === 0) {
                 sitesGrid.innerHTML = `
                     <div class="site-card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
                         <h3>🚀 No Sites Configured Yet</h3>
@@ -450,37 +525,20 @@
                     </div>
                 `;
                 activeSites.textContent = '0';
-                return;
             }
-            
-            sampleSites.forEach(site => {
-                if (site.status === 'active') {
-                    activeCount++;
-                    
-                    const siteCard = document.createElement('div');
-                    siteCard.className = 'site-card';
-                    siteCard.innerHTML = `
-                        <h3>${site.name}</h3>
-                        <div class="url">${site.url}</div>
-                        <div class="topics">
-                            ${site.topics.slice(0, 3).map(topic => `<span class="topic-tag">${topic}</span>`).join('')}
-                            ${site.topics.length > 3 ? `<span class="topic-tag">+${site.topics.length - 3} more</span>` : ''}
-                        </div>
-                        <div class="site-actions">
-                            <button class="btn btn-primary" onclick="generateForSite('${site.id}')">Generate Content</button>
-                            <button class="btn btn-secondary" onclick="viewSite('${site.url}')">View Site</button>
-                        </div>
-                    `;
-                    sitesGrid.appendChild(siteCard);
-                }
-            });
-            
-            activeSites.textContent = activeCount;
         }
         
         // Generate content for specific site
         function generateForSite(siteId) {
-            const site = sampleSites.find(s => s.id === siteId);
+            // Try to find site in loaded sites first
+            const loadedSites = window.loadedSites || [];
+            let site = loadedSites.find(s => s.id === siteId);
+            
+            // Fallback to sample sites
+            if (!site) {
+                site = sampleSites.find(s => s.id === siteId);
+            }
+            
             if (site) {
                 document.getElementById('topic').value = site.topics[0];
                 document.getElementById('contentForm').scrollIntoView({ behavior: 'smooth' });
@@ -523,6 +581,76 @@ The system will automatically route content to the right site based on topics!`)
         function configureSite() {
             alert('To configure a site, run this command in your terminal:\n\nnode scripts/configure-site.js\n\nThis will guide you through setting up your first topic-specific WordPress site.');
         }
+        
+        // Toggle add site form
+        function toggleAddSiteForm() {
+            const form = document.getElementById('addSiteForm');
+            const btn = document.getElementById('addSiteBtn');
+            
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                btn.textContent = 'Cancel';
+            } else {
+                form.style.display = 'none';
+                btn.textContent = 'Add New WordPress Site';
+                document.getElementById('newSiteForm').reset();
+            }
+        }
+        
+        // Handle new site form submission
+        document.getElementById('newSiteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const siteData = {
+                id: formData.get('siteId'),
+                name: formData.get('siteName'),
+                url: formData.get('siteUrl'),
+                username: formData.get('siteUsername'),
+                appPassword: formData.get('sitePassword'),
+                topics: formData.get('siteTopics').split(',').map(t => t.trim()).filter(t => t),
+                categories: formData.get('siteCategories').split(',').map(c => c.trim()).filter(c => c),
+                tags: formData.get('siteTags').split(',').map(t => t.trim()).filter(t => t),
+                status: 'active',
+                description: `Custom site: ${formData.get('siteName')}`,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            try {
+                // Test the WordPress connection first
+                const testResponse = await fetch('/api/test-site', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        url: siteData.url,
+                        username: siteData.username,
+                        password: siteData.appPassword
+                    })
+                });
+                
+                if (!testResponse.ok) {
+                    throw new Error('WordPress connection test failed');
+                }
+                
+                // Add the site via API
+                const addResponse = await fetch('/api/add-site', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(siteData)
+                });
+                
+                if (addResponse.ok) {
+                    alert('✅ Site added successfully!');
+                    toggleAddSiteForm();
+                    loadSites(); // Refresh the sites list
+                } else {
+                    throw new Error('Failed to add site');
+                }
+                
+            } catch (error) {
+                alert(`❌ Error adding site: ${error.message}\n\nPlease check:\n- WordPress site is running\n- URL is correct\n- Application Password is valid\n- Username is correct`);
+            }
+        });
         
         // Handle form submission
         document.getElementById('contentForm').addEventListener('submit', async function(e) {
