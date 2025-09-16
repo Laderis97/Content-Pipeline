@@ -37,6 +37,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "dotenv": "^17.2.2",
     "express": "^4.21.2",
     "uuid": "^13.0.0",
     "winston": "^3.17.0",
