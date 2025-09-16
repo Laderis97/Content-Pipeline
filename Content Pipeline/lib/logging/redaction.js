@@ -47,8 +47,11 @@ class SensitiveDataRedactor {
 
         this.allPatterns.forEach(pattern => {
             redacted = redacted.replace(pattern, (match, key, value) => {
-                const redactedValue = this._redactValue(value);
-                return match.replace(value, redactedValue);
+                if (value) {
+                    const redactedValue = this._redactValue(value);
+                    return match.replace(value, redactedValue);
+                }
+                return match;
             });
         });
 
@@ -153,6 +156,10 @@ class SensitiveDataRedactor {
      * @private
      */
     _redactValue(value) {
+        if (value === null || value === undefined) {
+            return value;
+        }
+        
         if (typeof value !== 'string') {
             return '[REDACTED]';
         }
